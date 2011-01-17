@@ -15,6 +15,7 @@ public class RadialGradient extends Fill {
     Point start;
     double radius;
     List<Stop> stops = new ArrayList<Stop>();
+    com.sun.opengl.util.texture.Texture texture;
 
     private RadialGradient() {
     }

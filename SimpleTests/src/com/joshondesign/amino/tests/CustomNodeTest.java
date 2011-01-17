@@ -41,9 +41,10 @@ public class CustomNodeTest implements NodeCreator {
                 RadialGradient rgrad = new RadialGradient.RadialGradientBuilder()
                         .center(new Point(50, 25))
                         .radius(20)
-                        .addStop(0.0, BLACK)
+                        .addStop(0.0, WHITE)
                         .addStop(0.5, Color.rgb(0x783587))
-                        .addStop(1.0, RED)
+                        .addStop(0.75, RED)
+                        .addStop(1.0, WHITE)
                         .build();
 
                 gfx.translate(0,200);

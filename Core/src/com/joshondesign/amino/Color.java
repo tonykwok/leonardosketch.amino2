@@ -46,7 +46,7 @@ public class Color extends Fill {
     }
 
     public int toRGBInt() {
-        return (((int)(r*255))<<16)
+        return 0xFF000000| (((int)(r*255))<<16)
                 + (((int)(g*255))<<8)
                 + (((int)(b*255))<<0)
                 ;
