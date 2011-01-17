@@ -75,10 +75,10 @@ public class JoglEventListener implements GLEventListener {
 
         //process the animations first
         long currentTime = System.nanoTime();
-        for(Anim anim : core.getAnimations()) {
+        for(Animateable animateable : core.getAnimations()) {
             //p("processing animation: " + anim);
             try {
-                anim.process(startTime,currentTime);
+                animateable.process(startTime,currentTime);
             } catch (Exception e) {
                 e.printStackTrace();
             }

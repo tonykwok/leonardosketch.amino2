@@ -23,12 +23,12 @@ import java.util.List;
 public class JoglCore extends Core {
     private GLCanvas canvas;
     private Frame frame;
-    private List<Anim> anims;
+    private List<Animateable> animateables;
     Node root;
     NodeCreator nodeCreator;
 
     public JoglCore() {
-        this.anims = new ArrayList<Anim>();
+        this.animateables = new ArrayList<Animateable>();
     }
 
     @Override
@@ -37,8 +37,8 @@ public class JoglCore extends Core {
     }
 
     @Override
-    public void add(Anim anim) {
-        this.anims.add(anim);
+    public void add(Animateable animateable) {
+        this.animateables.add(animateable);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class JoglCore extends Core {
 
     }
 
-    public Iterable<? extends Anim> getAnimations() {
-        return anims;
+    public Iterable<? extends Animateable> getAnimations() {
+        return animateables;
     }
 }

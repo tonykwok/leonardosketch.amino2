@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * Time: 9:05 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Anim {
+public class Anim implements Animateable {
     private Node node;
     private String property;
     private double startValue;
@@ -72,7 +72,7 @@ public class Anim {
         System.out.println(s);
     }
 
-    public Anim setAutoReverse(boolean autoReverse) {
+    public Animateable setAutoReverse(boolean autoReverse) {
         this.autoReverse = autoReverse;
         return this;
     }

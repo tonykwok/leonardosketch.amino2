@@ -19,7 +19,7 @@ public abstract class Core {
         return _impl;
     }
 
-    public abstract void add(Anim anim);
+    public abstract void add(Animateable animateable);
 
     public static void init(String pipeline) throws Exception {
         if(pipeline.equals("java2d")) {
