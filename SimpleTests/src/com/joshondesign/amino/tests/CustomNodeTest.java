@@ -4,6 +4,7 @@ import com.joshondesign.amino.*;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;
+import static com.joshondesign.amino.Util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,11 +23,36 @@ public class CustomNodeTest implements NodeCreator {
         return new ShapeNode() {
             @Override
             public void draw(Gfx gfx) {
-                gfx.setFill(Color.rgb(0.5,1,1));
-                //gfx.fill(new Oval())
                 //fill in an oval
+                gfx.setFill(Color.rgb(0.5,1,1));
+                gfx.fill(Ellipse.build(30,60,80,30));
+
+                //fill with a linear gradient
+                gfx.setFill(LinearGradient
+                        .line(new Point(0, 0), new Point(0, 100))
+                        .addStop(0.0, BLACK)
+                        .addStop(0.5, WHITE)
+                        .addStop(1.0, RED)
+                        .build()
+                );
+                gfx.fill(Ellipse.build(200,50,100,50));
+
+                //fill with a radial gradient
+                RadialGradient rgrad = new RadialGradient.RadialGradientBuilder()
+                        .center(new Point(50, 25))
+                        .radius(20)
+                        .addStop(0.0, BLACK)
+                        .addStop(0.5, Color.rgb(0x783587))
+                        .addStop(1.0, RED)
+                        .build();
+
+                gfx.translate(0,200);
+                gfx.setFill(rgrad);
+                gfx.fill(Ellipse.build(0,0,100,50));
+                gfx.translate(0,-200);
+
+
                 //fill in a curved path
-                //fill a rect with a linear gradient
                 //fill a rect with a radial gradient
                 //fill an oval with a texture
                 //fill an oval with a texture and a dropshadow

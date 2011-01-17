@@ -19,9 +19,19 @@ import static javax.media.opengl.GL.GL_BLEND;
  */
 public class JoglGfx extends AbstractGfx {
     GL2 gl;
+    private Shader copyBufferShader;
+    private LinearGradientShader linearGradientShader;
+    private RadialGradientShader radialGradientShader;
 
     public JoglGfx(JoglEventListener joglEventListener, GL2 gl) {
         this.gl = gl;
+
+        copyBufferShader = Shader.load(gl,
+                JoglGfx.class.getResource("shaders/PassThrough.vert"),
+                JoglGfx.class.getResource("shaders/CheckerBoard.frag")
+        );
+        linearGradientShader = new LinearGradientShader(gl);
+        radialGradientShader = new RadialGradientShader(gl);
     }
 
     public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
@@ -52,9 +62,11 @@ public class JoglGfx extends AbstractGfx {
         } else {
             fillSavedGeometry(path);
         }
+        unapplyFill();
         gl.glColor4f(1,1,1,1);
         gl.glDisable(GL_BLEND);
     }
+
 
     public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
         applyFill();
@@ -83,6 +95,21 @@ public class JoglGfx extends AbstractGfx {
         if(this.getFill() instanceof Color) {
             Color color = (Color) this.getFill();
             gl.glColor4d(color.r, color.g, color.b, color.a);
+        }
+        if(getFill() instanceof LinearGradient) {
+            linearGradientShader.enable(gl);
+        }
+        if(getFill() instanceof RadialGradient) {
+            radialGradientShader.enable(gl,(RadialGradient)getFill());
+        }
+    }
+
+    private void unapplyFill() {
+        if(getFill() instanceof LinearGradient) {
+            linearGradientShader.disable(gl);
+        }
+        if(getFill() instanceof RadialGradient) {
+            radialGradientShader.disable(gl);
         }
     }
 
