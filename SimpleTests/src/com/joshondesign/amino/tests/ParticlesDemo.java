@@ -108,8 +108,9 @@ public class ParticlesDemo implements NodeCreator {
         public void draw(Gfx gfx) {
             gfx.setFill(color);
             gfx.translate(x,y);
-            gfx.fill(path);
+            gfx.draw(path);
             gfx.translate(-x,-y);
+            //gfx.drawRect(Rect.build((int)x,(int)y,10,10),color,null,null);
         }
     }
 }

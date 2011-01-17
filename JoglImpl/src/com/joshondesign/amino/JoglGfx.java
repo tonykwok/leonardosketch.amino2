@@ -34,14 +34,6 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnd();
     }
 
-    private void applyFill() {
-        if(this.getFill() instanceof Color) {
-            Color color = (Color) this.getFill();
-            gl.glColor4d(color.r, color.g, color.b, color.a);
-        }
-
-    }
-
     public void fill(Path path, Fill fill, Buffer buffer, Rect clip) {
         gl.glEnable(GL_BLEND);
         //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
@@ -56,12 +48,42 @@ public class JoglGfx extends AbstractGfx {
 
         applyFill();
         if(path.geometry == null) {
-            fillComplexPoly(path);
+            fillComplexPoly(path,true);
         } else {
             fillSavedGeometry(path);
         }
         gl.glColor4f(1,1,1,1);
         gl.glDisable(GL_BLEND);
+    }
+
+    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
+        applyFill();
+        gl.glBegin(GL2.GL_LINE_LOOP);
+        gl.glVertex2d(rect.x,rect.y);
+        gl.glVertex2d(rect.x+rect.w,rect.y);
+        gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
+        gl.glVertex2d(rect.x,rect.y+rect.h);
+        gl.glEnd();
+    }
+
+    public void draw(Path path, Fill fill, Buffer buffer, Rect clip) {
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        applyFill();
+        if(path.geometry == null) {
+            fillComplexPoly(path,false);
+        } else {
+            fillSavedGeometry(path);
+        }
+        gl.glColor4f(1,1,1,1);
+        gl.glDisable(GL_BLEND);
+    }
+
+    private void applyFill() {
+        if(this.getFill() instanceof Color) {
+            Color color = (Color) this.getFill();
+            gl.glColor4d(color.r, color.g, color.b, color.a);
+        }
     }
 
     private void fillSavedGeometry(Path path) {
@@ -79,9 +101,6 @@ public class JoglGfx extends AbstractGfx {
     }
 
 
-    public void draw(Shape shape) {
-
-    }
 
     @Override
     public void translate(double x, double y) {
@@ -90,7 +109,7 @@ public class JoglGfx extends AbstractGfx {
 
     GLU glu = new GLU();
 
-    private void fillComplexPoly(Path path) {
+    private void fillComplexPoly(Path path, boolean filled) {
         //create a tesselator
         GLUtessellator tobj = GLU.gluNewTess();
         TessCallback tessCallback = new TessCallback(gl,glu,path);
@@ -98,6 +117,9 @@ public class JoglGfx extends AbstractGfx {
         GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
         GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
         GLU.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
+        if(!filled) {
+            GLU.gluTessProperty(tobj, GLU.GLU_TESS_BOUNDARY_ONLY, GL.GL_TRUE);
+        }
 
 
         this.gl.glPushMatrix();

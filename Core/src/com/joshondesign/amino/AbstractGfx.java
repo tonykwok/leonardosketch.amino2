@@ -56,9 +56,9 @@ public abstract class AbstractGfx implements Gfx {
     public void scale(double scaleX, double scaleY) {
     }
 
-    /*public void draw(Shape shape) {
-        draw(shape.toPath(), stack.peek().fill, getDefaultBuffer(), (Rect) null);
-    }*/
+    public void draw(Shape shape) {
+        draw(shape.toPath(), stack.peek().fill, null, (Rect) null);
+    }
 
     public void fill(Shape shape) {
         fill(shape.toPath(), stack.peek().fill, null, (Rect)null);
