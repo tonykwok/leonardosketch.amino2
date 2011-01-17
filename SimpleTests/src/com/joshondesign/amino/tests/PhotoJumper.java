@@ -25,18 +25,19 @@ public class PhotoJumper implements NodeCreator{
 
     public Node create() throws NoSuchMethodException {
         GroupNode group = new GroupNode();
-        for(int i=0; i<20; i++) {
+        int size = 15;
+        for(int i=0; i<200; i++) {
             RectangleNode rect = new RectangleNode()
                     .setX(0).setY(0).setWidth(50).setHeight(50);
             rect.setFill(Color.rgb(0,1,0));
             Core.getImpl().add(new Anim(rect,"x",
-                    (i%6)*100,  //start
-                    500-(i/6)*100,          //end
+                    (i%size)*100,  //start
+                    500-(i/size)*100,          //end
                     3)
                     .setAutoReverse(true));
             Core.getImpl().add(new Anim(rect,"y",
-                    (int)(i/6)*100,     //start
-                    (19-i)%6*100,                  //end
+                    (int)(i/size)*100,     //start
+                    (19-i)%size*100,                  //end
                     3)
                     .setAutoReverse(true));
             group.add(rect);

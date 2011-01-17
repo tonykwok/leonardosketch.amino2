@@ -34,7 +34,6 @@ public class Anim {
 
         String getter = "get" + property.substring(0, 1).toUpperCase() + property.substring(1);
         String setter = "set"+property.substring(0,1).toUpperCase()+property.substring(1);
-        System.out.println("trying to animation the property: " + property);
         getMethod = this.node.getClass().getMethod(getter);
         setMethod = this.node.getClass().getMethod(setter,double.class);
         this.currentValue = startValue;

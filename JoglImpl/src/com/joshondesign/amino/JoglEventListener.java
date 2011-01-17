@@ -65,6 +65,14 @@ public class JoglEventListener implements GLEventListener {
 
 
     public void display(GLAutoDrawable drawable) {
+        try {
+            if(core.root == null && core.nodeCreator != null) {
+                core.root = core.nodeCreator.create();
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
         //process the animations first
         long currentTime = System.nanoTime();
         for(Anim anim : core.getAnimations()) {

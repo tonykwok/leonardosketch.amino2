@@ -25,18 +25,15 @@ public class JoglCore extends Core {
     private Frame frame;
     private List<Anim> anims;
     Node root;
+    NodeCreator nodeCreator;
 
     public JoglCore() {
         this.anims = new ArrayList<Anim>();
     }
 
     @Override
-    public void init(NodeCreator basicAnimTest) {
-        try {
-            this.root = basicAnimTest.create();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+    public void init(NodeCreator creator) {
+        this.nodeCreator = creator;
     }
 
     @Override
@@ -69,6 +66,8 @@ public class JoglCore extends Core {
         Animator animator =new Animator(canvas);
         animator.add(canvas);
         animator.start();
+
+
     }
 
     public Iterable<? extends Anim> getAnimations() {
