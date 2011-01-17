@@ -14,25 +14,31 @@ import javax.media.opengl.glu.GLUtessellatorCallback;
 class TessCallback implements GLUtessellatorCallback {
     private GL2 gl;
     private GLU glu;
+    private Path targetPath;
 
-    TessCallback(GL2 gl, GLU glu) {
+    TessCallback(GL2 gl, GLU glu, Path path) {
         this.gl = gl;
         this.glu = glu;
+        this.targetPath = path;
     }
 
     public void begin(int type) {
-        /*p("beginning type: " + type);
+        //p("beginning type: " + type);
+        /*
         switch(type) {
-            case GL_TRIANGLE_FAN: p("   triangle fan"); break;
-            case GL_LINES: p("   lines"); break;
-            case GL_POLYGON: p("   polygon"); break;
-            case GL_TRIANGLES: p("   GL_TRIANGLES"); break;
+            case GL.GL_TRIANGLE_FAN: p("   triangle fan"); break;
+            case GL.GL_LINES: p("   lines"); break;
+            case GL2.GL_POLYGON: p("   polygon"); break;
+            case GL.GL_TRIANGLES: p("   GL_TRIANGLES"); break;
         }
-
+        */
         //p("lines = " + GL_LINES + " " + GL_LINE + " " + GL_POLYGON + " "
         // + GL_TRIANGLE_FAN + " " + GL_TRIANGLE_STRIP + " " + GL_TRIANGLES);
-        */
+
         gl.glBegin(type);
+        if(targetPath != null) {
+            targetPath.geometryType = type;
+        }
     }
 
     public void beginData(int i, Object o) {
@@ -59,6 +65,9 @@ class TessCallback implements GLUtessellatorCallback {
                 gl.glColor3dv(pointer, 3);
             }
             gl.glVertex3dv(pointer, 0);
+            if(targetPath != null) {
+                targetPath.addPoint(pointer);
+            }
         }
     }
 

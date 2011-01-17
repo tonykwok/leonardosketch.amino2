@@ -89,17 +89,27 @@ public class ParticlesDemo implements NodeCreator {
         double yv;
         public double x;
         public double y;
+        private Path path;
+        private Color color;
 
-        @Override
-        public void draw(Gfx gfx) {
-            gfx.setFill(Color.rgba(0.5,0.5,0.5,0.5));
-            Path path = Path.moveTo(x,y)
+        Particle() {
+            x = 0;
+            y = 0;
+            path = Path.moveTo(x,y)
                     .lineTo(x+30,y)
                     .lineTo(x+40,y+20)
                     .lineTo(x+10,y+30)
                     .lineTo(x, y+10)
                     .closeTo().build();
+            color = Color.rgba(0.5, 0.5, 0.5, 0.5);
+        }
+
+        @Override
+        public void draw(Gfx gfx) {
+            gfx.setFill(color);
+            gfx.translate(x,y);
             gfx.fill(path);
+            gfx.translate(-x,-y);
         }
     }
 }

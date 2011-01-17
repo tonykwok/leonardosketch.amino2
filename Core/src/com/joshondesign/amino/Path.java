@@ -8,6 +8,9 @@ import java.awt.Rectangle;
 
 public class Path extends Shape implements Iterable<Path.Segment> {
     private List<Segment> segments = new ArrayList<Segment>();
+    int geometryType;
+    private List<double[]> points;
+    double[][] geometry = null;
 
     private Path() {      }
 
@@ -44,6 +47,22 @@ public class Path extends Shape implements Iterable<Path.Segment> {
         }
         Rectangle b = p.getBounds();
         return new Rect(b.x,b.y,b.width,b.height);
+    }
+
+    void addPoint(double[] pointer) {
+        if(points == null) {
+            points = new ArrayList<double[]>();
+        }
+        points.add(pointer);
+    }
+
+    void endPoints() {
+        geometry = new double[points.size()][];
+        for(int i=0; i<points.size(); i++) {
+            geometry[i] = points.get(i);
+        }
+        points.clear();
+        points = null;
     }
 
     public enum Type { MoveTo, LineTo, CurveTo, CloseTo }

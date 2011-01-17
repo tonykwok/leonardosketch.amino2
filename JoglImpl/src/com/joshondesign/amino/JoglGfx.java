@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
@@ -8,8 +9,6 @@ import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 
 import static javax.media.opengl.GL.GL_BLEND;
-import static javax.media.opengl.GL.GL_ONE;
-import static javax.media.opengl.GL.GL_SRC_ALPHA;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,7 +37,7 @@ public class JoglGfx extends AbstractGfx {
     private void applyFill() {
         if(this.getFill() instanceof Color) {
             Color color = (Color) this.getFill();
-            gl.glColor4d(color.r,color.g,color.b,color.a);
+            gl.glColor4d(color.r, color.g, color.b, color.a);
         }
 
     }
@@ -48,26 +47,35 @@ public class JoglGfx extends AbstractGfx {
         //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 
         //basic transparency
-        //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
         //sort of like add
-        //gl.glBlendFunc(GL_ONE, GL_ONE);
+        //gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
         //ADD blending using alpha
-        gl.glBlendFunc(GL_ONE, GL_SRC_ALPHA);
+        //gl.glBlendFunc(GL_ONE, GL_SRC_ALPHA);
 
         applyFill();
-        fillComplexPoly(gl,path);
-        /*
-        gl.glColor3d(1.0,1.0,0);
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2d(-100, -100);
-        gl.glVertex2d(100,-100);
-        gl.glVertex2d(100,100);
-        gl.glVertex2d(-100,100);
-        gl.glEnd();
-        */
+        if(path.geometry == null) {
+            fillComplexPoly(path);
+        } else {
+            fillSavedGeometry(path);
+        }
         gl.glColor4f(1,1,1,1);
         gl.glDisable(GL_BLEND);
+    }
+
+    private void fillSavedGeometry(Path path) {
+        gl.glPushMatrix();
+        gl.glBegin(path.geometryType);
+        for(int i=0; i<path.geometry.length; i++) {
+            gl.glVertex3dv(path.geometry[i],0);
+        }
+        gl.glEnd();
+        gl.glPopMatrix();
+    }
+
+    private void p(String s) {
+        System.out.println(s);
     }
 
 
@@ -75,13 +83,17 @@ public class JoglGfx extends AbstractGfx {
 
     }
 
+    @Override
+    public void translate(double x, double y) {
+        gl.glTranslated(x,y,0);
+    }
 
     GLU glu = new GLU();
 
-    void fillComplexPoly(GL2 gl, Path path) {
+    private void fillComplexPoly(Path path) {
         //create a tesselator
         GLUtessellator tobj = GLU.gluNewTess();
-        TessCallback tessCallback = new TessCallback(gl,glu);
+        TessCallback tessCallback = new TessCallback(gl,glu,path);
         GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
         GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
         GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
@@ -140,6 +152,7 @@ public class JoglGfx extends AbstractGfx {
         GLU.gluTessEndPolygon(tobj);
         //end tesselation
         GLU.gluDeleteTess(tobj);
+        path.endPoints();
         gl.glPopMatrix();
     }
 
