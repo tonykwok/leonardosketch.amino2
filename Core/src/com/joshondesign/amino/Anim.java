@@ -22,6 +22,8 @@ public class Anim {
     private Method setMethod;
     private double currentValue;
     private long personalStart;
+    private boolean autoReverse;
+    private boolean direction = true;
 
     public Anim(Node node, String property, double startValue, double endValue, double cycleDuration) throws NoSuchMethodException {
         this.node = node;
@@ -41,19 +43,38 @@ public class Anim {
 
     public void process(long startTime, long currentTime) throws InvocationTargetException, IllegalAccessException {
         long elapsedNano = currentTime/1000-personalStart/1000;
-        //p("ellapsed = " + elapsedNano);
+
         long duration = (int)(cycleDuration*1000*1000);
-        //p("duration = " + duration);
+
         double fract = ((double)elapsedNano)/((double)duration);
-        //p("fract = " + fract);
-        if(fract >= 1.0) {
-            personalStart = System.nanoTime();
+        if(!direction) {
+            fract = 1.0-fract;
         }
         double value = startValue + (endValue-startValue)*fract;
         setMethod.invoke(node,new Object[]{value});
+
+        //loop
+        if(fract >= 1.0) {
+            personalStart = System.nanoTime();
+            if(autoReverse) {
+                direction = !direction;
+            }
+        }
+        if(fract < 0.0) {
+            personalStart = System.nanoTime();
+            if(autoReverse) {
+                direction = !direction;
+            }
+        }
+
     }
 
     private void p(String s) {
         System.out.println(s);
+    }
+
+    public Anim setAutoReverse(boolean autoReverse) {
+        this.autoReverse = autoReverse;
+        return this;
     }
 }
