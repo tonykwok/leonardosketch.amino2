@@ -8,5 +8,5 @@ package com.joshondesign.amino.nodes;
  * To change this template use File | Settings | File Templates.
  */
 public interface NodeCreator {
-    public Node create();
+    public Node create() throws NoSuchMethodException;
 }

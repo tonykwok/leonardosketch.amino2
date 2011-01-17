@@ -25,6 +25,8 @@ public class JoglEventListener implements GLEventListener {
     private JoglGfx gfx;
     private JoglCore core;
     private JoglDrawer drawer;
+    private long startTime;
+    private long lastTime;
 
     public JoglEventListener(JoglCore joglCore) {
         this.core = joglCore;
@@ -56,10 +58,25 @@ public class JoglEventListener implements GLEventListener {
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         drawer = new JoglDrawer();
+
+        startTime = System.nanoTime();
+        lastTime = System.nanoTime();
     }
 
 
     public void display(GLAutoDrawable drawable) {
+        //process the animations first
+        long currentTime = System.nanoTime();
+        for(Anim anim : core.getAnimations()) {
+            //p("processing animation: " + anim);
+            try {
+                anim.process(startTime,currentTime);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        lastTime = currentTime;
+
         GL2 gl = drawable.getGL().getGL2();
         width = drawable.getWidth();
         height = drawable.getHeight();
@@ -87,6 +104,10 @@ public class JoglEventListener implements GLEventListener {
         */
 
         JoglUtil.viewPerspective(gl);
+    }
+
+    private void p(String s) {
+        System.out.println(s);
     }
 
     GLU glu = new GLU();

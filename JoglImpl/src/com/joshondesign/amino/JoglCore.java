@@ -32,7 +32,11 @@ public class JoglCore extends Core {
 
     @Override
     public void init(NodeCreator basicAnimTest) {
-        this.root = basicAnimTest.create();
+        try {
+            this.root = basicAnimTest.create();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Override
@@ -65,5 +69,9 @@ public class JoglCore extends Core {
         Animator animator =new Animator(canvas);
         animator.add(canvas);
         animator.start();
+    }
+
+    public Iterable<? extends Anim> getAnimations() {
+        return anims;
     }
 }

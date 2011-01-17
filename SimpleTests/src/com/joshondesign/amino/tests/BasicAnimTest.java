@@ -25,14 +25,14 @@ public class BasicAnimTest implements NodeCreator {
         Core.getImpl().init(new BasicAnimTest());
     }
 
-    public Node create() {
+    public Node create() throws NoSuchMethodException {
         RectangleNode rect = new RectangleNode()
                 .setX(0).setY(0).setWidth(200).setHeight(100);
         rect.setFill(Color.rgb(1, 1, 1));
-        Core.getImpl().add(new Anim(rect, "x", 0, 300, 10.0));
-        //Anim anim2 = new Anim(rect,"y",300,0,10.0);
-        //Anim anim3 = new Anim(rect,"width",10,300,10.0);
-        //Anim anim4 = new Anim(rect,"height",300,10,10.0);
+        Core.getImpl().add(new Anim(rect, "x", 0, 600, 6.0));
+        Core.getImpl().add(new Anim(rect,"y", 300, 0, 10.0));
+        Core.getImpl().add(new Anim(rect,"width",10,300,5.0));
+        Core.getImpl().add(new Anim(rect,"height",300,10,10.0));
 
         GroupNode group = new GroupNode();
         group.add(rect);
