@@ -44,8 +44,8 @@ public class RadialGradientShader {
                 floats[i] = (float) fill.stops.get(i).position;
                 colors[i] = new java.awt.Color(fill.stops.get(i).color.toRGBInt());
             }
-            g2.setPaint(new LinearGradientPaint(0,0,0,255,floats,colors));
-            g2.fillRect(0,0,1,255);
+            g2.setPaint(new LinearGradientPaint(0,0,0,256,floats,colors));
+            g2.fillRect(0,0,1,256);
             g2.dispose();
 
 

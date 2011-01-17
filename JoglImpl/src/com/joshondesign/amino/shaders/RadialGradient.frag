@@ -20,8 +20,11 @@ void main() {
     //divide by radius to get value from 0-1
     float gradientCoeff = len / gradientRadius;
 
-    //find the mix between the start and end colors
-    //gl_FragColor = mix(startColor,endColor,gradientCoeff);
+    //clamp to 1.0 if too far
+    if(gradientCoeff > 1.0) {
+        gradientCoeff = 1.0;
+    }
+    //look up the color from the gradient texture
     gl_FragColor = texture2D(tex,vec2(0,gradientCoeff));
 
 }
