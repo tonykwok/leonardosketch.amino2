@@ -63,8 +63,36 @@ public class JoglEventListener implements GLEventListener {
         lastTime = System.nanoTime();
     }
 
+    private long prevTime = -1;
+    private double[] timeMeasurements = new double[NUM_TIME_MEASUREMENTS];
+    private int iCurrentTimeRecord = 0;
+    private static final int NUM_TIME_MEASUREMENTS = 30;
+    private double fps;
 
+    private int count;
     public void display(GLAutoDrawable drawable) {
+        if ( prevTime != -1 ) {
+            long t1 = System.nanoTime();
+            long t = t1 - prevTime;
+            timeMeasurements[iCurrentTimeRecord++%NUM_TIME_MEASUREMENTS] = t;
+            prevTime = t1;
+            //cube.dt = (float) (t*1e-9);
+            double s = 0.0;
+            for ( int i=0; i<NUM_TIME_MEASUREMENTS; i++ ) {
+                s += timeMeasurements[i];
+            }
+            fps = (NUM_TIME_MEASUREMENTS*1e9)/s;
+        } else {
+            prevTime = System.nanoTime();
+            fps = 30.0; // some initial value
+            //cube.dt = (float) (1.0/fps);
+        }
+
+        count++;
+        if(count % 60 == 0) {
+            p("count = " + count + " fps = " + fps);
+        }
+
         try {
             if(core.root == null && core.nodeCreator != null) {
                 core.root = core.nodeCreator.create();
@@ -99,6 +127,7 @@ public class JoglEventListener implements GLEventListener {
         gfx.gl = gl;
         drawer.drawNode(gfx, core.root);
         gl.glPopMatrix();
+
 
         /*
         //for debugging

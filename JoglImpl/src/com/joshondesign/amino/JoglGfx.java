@@ -7,6 +7,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 
+import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.GL_ONE;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+
 /**
  * Created by IntelliJ IDEA.
  * User: joshmarinacci
@@ -34,12 +38,23 @@ public class JoglGfx extends AbstractGfx {
     private void applyFill() {
         if(this.getFill() instanceof Color) {
             Color color = (Color) this.getFill();
-            gl.glColor3d(color.r,color.g,color.b);
+            gl.glColor4d(color.r,color.g,color.b,color.a);
         }
 
     }
 
     public void fill(Path path, Fill fill, Buffer buffer, Rect clip) {
+        gl.glEnable(GL_BLEND);
+        //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+
+        //basic transparency
+        //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        //sort of like add
+        //gl.glBlendFunc(GL_ONE, GL_ONE);
+        //ADD blending using alpha
+        gl.glBlendFunc(GL_ONE, GL_SRC_ALPHA);
+
         applyFill();
         fillComplexPoly(gl,path);
         /*
@@ -52,6 +67,7 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnd();
         */
         gl.glColor4f(1,1,1,1);
+        gl.glDisable(GL_BLEND);
     }
 
 

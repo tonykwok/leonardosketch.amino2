@@ -22,8 +22,8 @@ import java.util.List;
  *
  */
 public class ParticlesDemo implements NodeCreator {
-    private static final int MAX_PARTICLES = 300;
-    private static final int NEW_PARTICLES_PER_TICK = 1;
+    private static final int MAX_PARTICLES = 3000;
+    private static final int NEW_PARTICLES_PER_TICK = 10;
 
 
     private GroupNode group;
@@ -92,8 +92,13 @@ public class ParticlesDemo implements NodeCreator {
 
         @Override
         public void draw(Gfx gfx) {
-            gfx.setFill(Color.rgb(0.5,0.5,0.5));
-            Path path = Path.moveTo(x,y).lineTo(x+10,y).lineTo(x,y+10).closeTo().build();
+            gfx.setFill(Color.rgba(0.5,0.5,0.5,0.5));
+            Path path = Path.moveTo(x,y)
+                    .lineTo(x+30,y)
+                    .lineTo(x+40,y+20)
+                    .lineTo(x+10,y+30)
+                    .lineTo(x, y+10)
+                    .closeTo().build();
             gfx.fill(path);
         }
     }
