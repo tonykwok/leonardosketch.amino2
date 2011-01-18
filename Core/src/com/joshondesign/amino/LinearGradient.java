@@ -1,12 +1,15 @@
 package com.joshondesign.amino;
 
 
+import com.sun.opengl.util.texture.Texture;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class LinearGradient extends Fill{
     Point start, end;
     List<Stop> stops = new ArrayList<Stop>();
+    public Texture texture;
 
     static class Stop {
         double position;

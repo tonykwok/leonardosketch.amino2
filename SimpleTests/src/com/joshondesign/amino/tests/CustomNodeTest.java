@@ -24,18 +24,22 @@ public class CustomNodeTest implements NodeCreator {
             @Override
             public void draw(Gfx gfx) {
                 //fill in an oval
-                gfx.setFill(Color.rgb(0.5,1,1));
-                gfx.fill(Ellipse.build(30,60,80,30));
+                //gfx.setFill(Color.rgb(0.5,1,1));
+                //gfx.fill(Ellipse.build(30,60,80,30));
 
                 //fill with a linear gradient
                 gfx.setFill(LinearGradient
                         .line(new Point(0, 0), new Point(0, 100))
-                        .addStop(0.0, BLACK)
-                        .addStop(0.5, WHITE)
+                        .addStop(0.0, GREEN)
+                        .addStop(0.5, BLUE)
                         .addStop(1.0, RED)
                         .build()
                 );
-                gfx.fill(Ellipse.build(200,50,100,50));
+                gfx.translate(0,0);
+                gfx.fill(Rect.build(0,0,400,400));
+                gfx.translate(0,0);
+
+
 
                 //fill with a radial gradient
                 RadialGradient rgrad = new RadialGradient.RadialGradientBuilder()
@@ -53,6 +57,10 @@ public class CustomNodeTest implements NodeCreator {
                 gfx.translate(0,-200);
 
 
+                gfx.translate(200,200);
+                gfx.setFill(rgrad);
+                gfx.fill(Ellipse.build(0,0,100,50));
+                gfx.translate(200,-200);
                 //fill in a curved path
                 //fill a rect with a radial gradient
                 //fill an oval with a texture

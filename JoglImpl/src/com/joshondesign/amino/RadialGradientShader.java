@@ -2,14 +2,11 @@ package com.joshondesign.amino;
 
 import com.sun.opengl.util.texture.awt.AWTTextureIO;
 
-import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import java.awt.Color;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static javax.media.opengl.GL.*;
 
@@ -49,11 +46,11 @@ public class RadialGradientShader {
             g2.dispose();
 
 
-            try {
+            /*try {
                 ImageIO.write(im, "png", new File("testblah.png"));
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+            }*/
 
 
             fill.texture = AWTTextureIO.newTexture(im, false);

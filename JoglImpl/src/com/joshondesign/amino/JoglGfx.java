@@ -97,7 +97,7 @@ public class JoglGfx extends AbstractGfx {
             gl.glColor4d(color.r, color.g, color.b, color.a);
         }
         if(getFill() instanceof LinearGradient) {
-            linearGradientShader.enable(gl);
+            linearGradientShader.enable(gl, (LinearGradient) getFill());
         }
         if(getFill() instanceof RadialGradient) {
             radialGradientShader.enable(gl,(RadialGradient)getFill());

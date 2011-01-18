@@ -11,4 +11,6 @@ public class Util {
     public static final Color BLACK = Color.rgb(0x000000);
     public static final Color WHITE = Color.rgb(0xffffff);
     public static final Color RED = Color.rgb(0xff0000);
+    public static final Color GREEN = Color.rgb(0x00ff00);
+    public static final Color BLUE = Color.rgb(0x0000ff);
 }

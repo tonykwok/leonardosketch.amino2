@@ -23,7 +23,13 @@ public class Rect extends Shape {
 
     @Override
     public Path toPath() {
-        return null;
+        Path pth = Path
+                .moveTo(x,y)
+                .lineTo(x,y+h)
+                .lineTo(x+w,y+h)
+                .lineTo(x+w,y)
+                .closeTo().build();
+        return pth;
     }
 
     @Override
