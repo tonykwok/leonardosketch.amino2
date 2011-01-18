@@ -29,7 +29,7 @@ public class CustomNodeTest implements NodeCreator {
 
                 //fill with a linear gradient
                 gfx.setFill(LinearGradient
-                        .line(new Point(0, 0), new Point(0, 100))
+                        .line(new Point(0, 0), new Point(50, 100))
                         .addStop(0.0, GREEN)
                         .addStop(0.5, BLUE)
                         .addStop(1.0, RED)

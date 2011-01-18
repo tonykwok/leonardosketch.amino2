@@ -13,9 +13,6 @@ void main() {
     float imagex = gl_FragCoord.x/textureWidth;
     float imagey = gl_FragCoord.y/textureHeight;
 
-    vec4 startColor = vec4(1,0,0,1);
-    vec4 endColor = vec4(0,1,0,1);
-
     //calculate the start and end points of the gradient in image space from 0 to 1
 
     float xs = startPoint.x/textureWidth;
@@ -29,10 +26,39 @@ void main() {
 
     //calc the x position into the gradient line
     //plus the y position into the gradient line
-    float gradPos = ((imagex-xs)*xd+(imagey-ys)*yd)*len;
+    float term1 = (imagex-xs)*xd;
+    //float term1 = ((gl_FragCoord.x-startPoint.x) * (endPoint.x-startPoint.x))/textureWidth;
+    //float term2 = (imagey-ys)*yd;
+    //float term2 = ((gl_FragCoord.y-startPoint.y) * (endPoint.y-startPoint.y))/textureHeight;
+    float term2 = (gl_FragCoord.y-startPoint.y)/textureHeight * ((endPoint.y - startPoint.y)/textureHeight);
+    //float term2 =   ((gl_FragCoord.y-startPoint.y) * (endPoint.y - startPoint.y))/textureHeight;
+    float gradPos = (term1+term2)*len;
 
     gl_FragColor = texture2D(tex,vec2(0,gradPos));
 
-    //gl_FragColor = mix(startColor,endColor,gradPos);
+            /*
+    ix = x/w;
+    iy = y/h;
+    xs = sx/w;
+    xe = ex/w;
+    ys = sy/h;
+    ye = ey/h;
+
+    xd = xe-xs; ex/w - sx/w;
+    yd = ye-ys;
+
+
+    p = ((ix-xs) * xd +          (iy-ys)*yd)) * len;
+        (x/w-sx/w) * (ex/w-sx/w);
+        (x-sx)/w * (ex-sx)/w;
+        ((x-sx)*(ex-sx))/w
+
+        (iy-ys)*yd
+        (y/h - sy/h)* (ye-ys)
+        (y-sy)/h  * (ey/h-sy/h)
+        (y-sy)/h  * (ey-sy)/h
+        ((y-sy)*(ey-sy))/h
+
+    */
 
 }
