@@ -38,8 +38,8 @@ public interface MinimalGfx {
     //public void applyEffect(Rect sourceRect, Buffer sourceBuffer, Buffer targetBuffer, Effect effect);
 
     //fills
-    public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip);
-    public void fill(Path path, Fill fill, Buffer buffer, Rect clip);
+    public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend);
+    public void fill(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend);
     //public void fill(Path path, Fill fill, Buffer buffer, Path clip);
 
     //draws

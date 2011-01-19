@@ -22,6 +22,7 @@ public abstract class AbstractGfx implements Gfx {
 
     private static class Context {
         public Fill fill;
+        public Blend blend;
         //public Effect effect;
         //public Transform transform;
 
@@ -30,6 +31,7 @@ public abstract class AbstractGfx implements Gfx {
 
         public Context(Context parent) {
             this.fill = parent.fill;
+            this.blend = parent.blend;
             //this.effect = parent.effect;
             //this.transform = parent.transform;
         }
@@ -38,9 +40,18 @@ public abstract class AbstractGfx implements Gfx {
     public void setFill(Fill fill) {
         stack.peek().fill = fill;
     }
+    public void setBlend(Blend blend) {
+        stack.peek().blend = blend;
+    }
 
     public Fill getFill() {
         return stack.peek().fill;
+    }
+    public Blend getBlend() {
+        if(stack.peek().blend == null) {
+            return Blend.Normal;
+        }
+        return stack.peek().blend;
     }
 
     /*public void setEffect(Effect effect) {
@@ -61,7 +72,7 @@ public abstract class AbstractGfx implements Gfx {
     }
 
     public void fill(Shape shape) {
-        fill(shape.toPath(), stack.peek().fill, null, (Rect)null);
+        fill(shape.toPath(), stack.peek().fill, null, (Rect)null, getBlend());
     }
 
     public void push() {

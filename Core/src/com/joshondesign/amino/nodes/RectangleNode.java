@@ -1,5 +1,6 @@
 package com.joshondesign.amino.nodes;
 
+import com.joshondesign.amino.Blend;
 import com.joshondesign.amino.Gfx;
 import com.joshondesign.amino.Rect;
 
@@ -40,7 +41,7 @@ public class RectangleNode extends ShapeNode {
     public void draw(Gfx gfx) {
         gfx.setFill(getFill());
         Rect rect = Rect.build((int) x, (int) y, (int) width, (int) height);
-        gfx.fillRect(rect,getFill(),null,null);
+        gfx.fillRect(rect,getFill(),null,null, Blend.Normal);
     }
 
     public double getX() {

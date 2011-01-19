@@ -39,7 +39,7 @@ public class JoglGfx extends AbstractGfx {
         radialGradientShader = new RadialGradientShader(gl);
     }
 
-    public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
+    public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend) {
         applyFill();
         gl.glBegin(GL2.GL_QUADS);
         gl.glVertex2d(rect.x,rect.y);
@@ -49,7 +49,7 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnd();
     }
 
-    public void fill(Path path, Fill fill, Buffer buffer, Rect clip) {
+    public void fill(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend) {
         //p("doing a standard path fill:" + path + " " + fill + " ");
         gl.glEnable(GL_BLEND);
         //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
@@ -60,7 +60,9 @@ public class JoglGfx extends AbstractGfx {
         //sort of like add
         //gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
         //ADD blending using alpha
-        //gl.glBlendFunc(GL_ONE, GL_SRC_ALPHA);
+        if(blend == Blend.Add) {
+            gl.glBlendFunc(GL.GL_ONE, GL.GL_SRC_ALPHA);
+        }
 
         applyFill();
         if(path.geometry == null) {
