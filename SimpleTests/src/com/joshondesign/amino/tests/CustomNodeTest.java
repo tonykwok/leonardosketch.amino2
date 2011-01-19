@@ -110,13 +110,15 @@ public class CustomNodeTest implements NodeCreator {
 
                 //copy the first buffer into the second buffer using a dropshadow
                 //BoxblurEffect effect = BoxblurEffect.build(3);
-                DropshadowEffect effect = DropshadowEffect.build(3,3,3,Util.WHITE);
-                gfx.applyEffect(Rect.build(0, 0, 100, 100), buffer, buffer2, effect);
+                DropshadowEffect shadowEffect = DropshadowEffect.build(3,3,3,Util.WHITE);
+                RippleEffect rippleEffect = RippleEffect.build();
+
+                gfx.applyEffect(Rect.build(0, 0, 100, 100), buffer, buffer2, rippleEffect);
 
                 //copy buffer2 to the screen
                 gfx.copyBuffer(
                         Rect.build(0, 0, 100, 100), buffer2,
-                        Rect.build(100, 300, 100, 100), gfx.getDefaultBuffer(),
+                        Rect.build(0, 200, 100, 100), gfx.getDefaultBuffer(),
                         Blend.Normal);
 
             }

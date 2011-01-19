@@ -38,6 +38,7 @@ public class JoglGfx extends AbstractGfx {
     private Buffer defaultBuffer;
     private JoglEventListener master;
     private Shader shadowBlurShader;
+    private Shader rippleShader;
 
     public JoglGfx(JoglEventListener master, GL2 gl) {
         this.master = master;
@@ -51,6 +52,9 @@ public class JoglGfx extends AbstractGfx {
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
                 JoglGfx.class.getResource("shaders/ShadowBlur.frag")
         );
+        rippleShader = Shader.load(gl,
+                JoglGfx.class.getResource("shaders/PassThrough.vert"),
+                JoglGfx.class.getResource("shaders/Ripple.frag"));
 
         linearGradientShader = new LinearGradientShader(gl);
         radialGradientShader = new RadialGradientShader(gl);
@@ -161,18 +165,25 @@ public class JoglGfx extends AbstractGfx {
         //if(effect instanceof BoxblurEffect) {
         //    renderBufferWithShader(gl, boxBlurShader, (FrameBufferObject) sourceBuffer, targetBuffer);
         //}
+        FrameBufferObject source = (FrameBufferObject) sourceBuffer;
         if(effect instanceof DropshadowEffect) {
             DropshadowEffect ds = (DropshadowEffect) effect;
             gl.glTranslated(ds.x,-ds.y,0);
             //render blur into buffer first
-            renderBufferWithShader(gl, shadowBlurShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+            renderBufferWithShader(gl, shadowBlurShader, source, targetBuffer);
             //render original shape into buffer next
             gl.glTranslated(-ds.x, ds.y, 0);
-            renderBufferWithShader(gl, copyBufferShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+            renderBufferWithShader(gl, copyBufferShader, source, targetBuffer);
         }
+
+        if(effect instanceof RippleEffect) {
+            RippleEffect re = (RippleEffect) effect;
+            renderBufferWithShader(gl, rippleShader, source, targetBuffer);
+        }
+
         //if no effect, just copy from source to target buffer
         if(effect == null) {
-            renderBufferWithShader(gl, copyBufferShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+            renderBufferWithShader(gl, copyBufferShader, source, targetBuffer);
         }
         gl.glPopMatrix();
     }
