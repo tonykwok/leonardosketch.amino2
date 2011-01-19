@@ -1,5 +1,8 @@
 package com.joshondesign.amino;
 
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.awt.AWTTextureIO;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
@@ -7,8 +10,10 @@ import javax.media.opengl.glu.GLUtessellator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
+import java.awt.image.BufferedImage;
 
 import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL2.GL_QUADS;
 
 /**
  * Created by IntelliJ IDEA.
@@ -224,5 +229,28 @@ public class JoglGfx extends AbstractGfx {
             }
         }
         return p;
+    }
+
+    public void drawImage(BufferedImage buf, int x, int y) {
+        Texture tex = AWTTextureIO.newTexture(buf, false);
+        tex.enable();
+        tex.bind();
+        //for debugging
+        /*
+        gl.glColor3d(1.0,0,0);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glVertex2d(-100, -100);
+        gl.glVertex2d(100,-100);
+        gl.glVertex2d(100,100);
+        gl.glVertex2d(-100,100);
+        gl.glEnd();*/
+        gl.glBegin( GL_QUADS );
+            gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);
+            gl.glTexCoord2f( 0f, 1f ); gl.glVertex2f( 0, 256 );
+            gl.glTexCoord2f( 1f, 1f ); gl.glVertex2f( 256, 256 );
+            gl.glTexCoord2f( 1f, 0f ); gl.glVertex2f(256, 0);
+        gl.glEnd();
+        tex.disable();
+        tex.destroy(gl);
     }
 }

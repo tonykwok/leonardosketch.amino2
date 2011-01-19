@@ -64,6 +64,8 @@ public class JoglCore extends Core {
 
         //use a regular animator to let the OS handle frame rate throttling for us
         Animator animator =new Animator(canvas);
+        //FPSAnimator animator = new FPSAnimator(canvas, 60);
+        //animator.setRunAsFastAsPossible(true);
         animator.add(canvas);
         animator.start();
 
