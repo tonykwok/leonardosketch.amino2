@@ -3,6 +3,7 @@ package com.joshondesign.amino;
 import com.joshondesign.amino.nodes.GroupNode;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.ShapeNode;
+import com.joshondesign.amino.nodes.TransformNode;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +20,16 @@ public class JoglDrawer {
         if(root instanceof ShapeNode) {
             drawShape(gfx, (ShapeNode) root);
         }
+        if(root instanceof TransformNode) {
+            drawShape(gfx, (TransformNode) root);
+        }
 
+    }
+
+    private void drawShape(JoglGfx gfx, TransformNode root) {
+        gfx.translate(root.getTranslateX(),root.getTranslateY());
+        drawNode(gfx,root.getChild());
+        gfx.translate(-root.getTranslateX(),-root.getTranslateY());
     }
 
     private void drawGroup(JoglGfx gfx, GroupNode group) {

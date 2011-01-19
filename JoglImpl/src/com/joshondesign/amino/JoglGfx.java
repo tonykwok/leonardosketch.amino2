@@ -50,6 +50,7 @@ public class JoglGfx extends AbstractGfx {
     }
 
     public void fill(Path path, Fill fill, Buffer buffer, Rect clip) {
+        //p("doing a standard path fill:" + path + " " + fill + " ");
         gl.glEnable(GL_BLEND);
         //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 

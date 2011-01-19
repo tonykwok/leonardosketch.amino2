@@ -38,7 +38,7 @@ public class Color extends Fill {
         return null;
     }
     public static Color hsv(double h, double s, double v) {
-        return null;
+        return Color.rgb(java.awt.Color.HSBtoRGB((float)h,(float)s,(float)v));
     }
 
     public String toString() {

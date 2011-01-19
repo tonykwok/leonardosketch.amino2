@@ -13,4 +13,12 @@ public class Util {
     public static final Color RED = Color.rgb(0xff0000);
     public static final Color GREEN = Color.rgb(0x00ff00);
     public static final Color BLUE = Color.rgb(0x0000ff);
+
+    public static double random(double min, double max) {
+        return Math.random()*(max-min) + min;
+    }
+
+    public static Fill randomHue() {
+        return Color.hsv(Math.random()*360,1,1);
+    }
 }

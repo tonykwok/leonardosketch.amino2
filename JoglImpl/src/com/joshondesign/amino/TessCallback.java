@@ -90,19 +90,28 @@ class TessCallback implements GLUtessellatorCallback {
 
     public void combine(double[] coords, Object[] data, float[] weight, Object[] outData) {
         p("combine");
-        double[] vertex = new double[6];
+
+        double[] vertex = new double[3];
+
+        vertex[0] = coords[0];
+        vertex[1] = coords[1];
+        vertex[2] = coords[2];
+        outData[0] = vertex;
+
+
+        /*double[] vertex = new double[6];
         int i;
 
         vertex[0] = coords[0];
         vertex[1] = coords[1];
         vertex[2] = coords[2];
-        for (i = 3; i < 6/* 7OutOfBounds from C! */; i++)
+        for (i = 3; i < 6/* 7OutOfBounds from C! *//*;i++)
             vertex[i] = weight[0] //
                     * ((double[]) data[0])[i] + weight[1]
                     * ((double[]) data[1])[i] + weight[2]
                     * ((double[]) data[2])[i] + weight[3]
                     * ((double[]) data[3])[i];
-        outData[0] = vertex;
+        outData[0] = vertex;*/
     }
 
     public void combineData(double[] doubles, Object[] objects, float[] floats, Object[] objects1, Object o) {
