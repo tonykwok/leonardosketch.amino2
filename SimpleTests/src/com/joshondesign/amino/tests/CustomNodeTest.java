@@ -5,6 +5,10 @@ import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 /**
  * Created by IntelliJ IDEA.
  * User: joshmarinacci
@@ -15,6 +19,7 @@ import com.joshondesign.amino.nodes.ShapeNode;
 public class CustomNodeTest implements NodeCreator {
     private Buffer buffer;
     private Buffer buffer2;
+    private Buffer buffer3;
 
     public static void main(String ... args) throws Exception {
         Core.init("jogl");
@@ -75,8 +80,8 @@ public class CustomNodeTest implements NodeCreator {
 
 
 
-                clear(gfx);
-
+                //clear(gfx);
+                /*
                 //create buffer if needed
                 if(buffer == null) {
                     buffer = gfx.createBuffer(100,100);
@@ -121,6 +126,25 @@ public class CustomNodeTest implements NodeCreator {
                         Rect.build(0, 200, 100, 100), gfx.getDefaultBuffer(),
                         Blend.Normal);
 
+                */
+                Fill texfill = null;
+                if(buffer3 == null) {
+                    buffer3 = gfx.createBuffer(300,300);
+                    try {
+                        BufferedImage img = ImageIO.read(BasicAnimTest.class.getResource("cat.png"));
+                        texfill = TextureFill.build(img);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //draw a rect clipped by the ellipse below it, then blit to the screen
+                gfx.fill(Ellipse.build(60,20,200,100).toPath(), Color.rgba(1,1,1,1), buffer3, null, Blend.Normal);
+                gfx.fill(Rect.build(0,0,200,200).toPath(), Color.rgba(0,1,0,1), buffer3, null, Blend.SrcIn);
+                gfx.copyBuffer(
+                        Rect.build(0, 0, 300, 300), buffer3,
+                        Rect.build(0, 0, 300, 300), gfx.getDefaultBuffer(),
+                        Blend.Normal);
             }
         };
     }

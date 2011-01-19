@@ -9,5 +9,5 @@ package com.joshondesign.amino;
  */
 public enum Blend {
     Normal,
-    Add
+    SrcIn, Add
 }

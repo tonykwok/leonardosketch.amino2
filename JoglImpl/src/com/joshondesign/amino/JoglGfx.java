@@ -92,6 +92,8 @@ public class JoglGfx extends AbstractGfx {
     }
 
     public void copyBuffer(Rect sourceRect, Buffer sourceBuffer, Rect targetRect, Buffer targetBuffer, Blend blend) {
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         gl.glPushMatrix();
         gl.glTranslated(targetRect.x,targetRect.y,0);
         renderBufferWithShader(gl, copyBufferShader, (FrameBufferObject) sourceBuffer, targetBuffer);
@@ -237,15 +239,22 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnable(GL_BLEND);
         //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 
-        //basic transparency
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
-        //sort of like add
-        //gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
-        //ADD blending using alpha
-        if(blend == Blend.Add) {
-            gl.glBlendFunc(GL.GL_ONE, GL.GL_SRC_ALPHA);
+        switch(blend) {
+            case Normal:
+                //basic transparency
+                gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case Add:
+                //sort of like add
+                //gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+                //ADD blending using alpha
+                gl.glBlendFunc(GL.GL_ONE, GL.GL_SRC_ALPHA);
+                break;
+            case SrcIn:
+                gl.glBlendFunc(GL.GL_DST_ALPHA, GL.GL_ZERO);
+                break;
         }
+
 
         applyFill(fill);
 
