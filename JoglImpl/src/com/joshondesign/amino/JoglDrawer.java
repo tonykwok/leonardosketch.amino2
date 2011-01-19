@@ -21,14 +21,16 @@ public class JoglDrawer {
             drawShape(gfx, (ShapeNode) root);
         }
         if(root instanceof TransformNode) {
-            drawShape(gfx, (TransformNode) root);
+            drawTransform(gfx, (TransformNode) root);
         }
 
     }
 
-    private void drawShape(JoglGfx gfx, TransformNode root) {
+    private void drawTransform(JoglGfx gfx, TransformNode root) {
         gfx.translate(root.getTranslateX(),root.getTranslateY());
+        gfx.rotate(0,0,root.getRotate());
         drawNode(gfx,root.getChild());
+        gfx.rotate(0,0,-root.getRotate());
         gfx.translate(-root.getTranslateX(),-root.getTranslateY());
     }
 

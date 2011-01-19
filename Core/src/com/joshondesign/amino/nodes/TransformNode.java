@@ -13,6 +13,16 @@ public class TransformNode extends Node {
     private double translateX;
     private double translateY;
 
+    public double getRotate() {
+        return rotate;
+    }
+
+    public void setRotate(double rotate) {
+        this.rotate = rotate;
+    }
+
+    private double rotate;
+
     public double getTranslateY() {
         return translateY;
     }

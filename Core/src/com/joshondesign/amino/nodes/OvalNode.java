@@ -1,8 +1,7 @@
 package com.joshondesign.amino.nodes;
 
-import com.joshondesign.amino.Path;
-import com.joshondesign.amino.Rect;
-import com.joshondesign.amino.Shape;
+import com.joshondesign.amino.Ellipse;
+import com.joshondesign.amino.Gfx;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,14 +10,35 @@ import com.joshondesign.amino.Shape;
  * Time: 12:18 AM
  * To change this template use File | Settings | File Templates.
  */
-public class OvalNode extends Shape {
-    @Override
-    public Path toPath() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+public class OvalNode extends ShapeNode {
+    private double x;
+    private double y;
+    private double width;
+    private double height;
+
+    public OvalNode setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    public OvalNode setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    public OvalNode setWidth(double width) {
+        this.width = width;
+        return this;
+    }
+
+    public OvalNode setHeight(double height) {
+        this.height = height;
+        return this;
     }
 
     @Override
-    public Rect getBounds() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public void draw(Gfx gfx) {
+        gfx.setFill(getFill());
+        gfx.fill(Ellipse.build(x,y,width,height));
     }
 }

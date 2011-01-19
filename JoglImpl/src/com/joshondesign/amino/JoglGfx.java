@@ -27,6 +27,7 @@ public class JoglGfx extends AbstractGfx {
     private Shader copyBufferShader;
     private LinearGradientShader linearGradientShader;
     private RadialGradientShader radialGradientShader;
+    private TextureShader textureShader;
 
     public JoglGfx(JoglEventListener joglEventListener, GL2 gl) {
         this.gl = gl;
@@ -37,16 +38,32 @@ public class JoglGfx extends AbstractGfx {
         );
         linearGradientShader = new LinearGradientShader(gl);
         radialGradientShader = new RadialGradientShader(gl);
+        textureShader = new TextureShader(gl);
     }
 
     public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend) {
         applyFill();
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2d(rect.x,rect.y);
-        gl.glVertex2d(rect.x+rect.w,rect.y);
-        gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
-        gl.glVertex2d(rect.x,rect.y+rect.h);
-        gl.glEnd();
+        if(getFill() instanceof TextureFill) {
+            BufferedImage source = ((TextureFill)getFill()).img;
+            gl.glBegin(GL_QUADS);
+            gl.glTexCoord2f(0f, 0f);
+            gl.glVertex2d(rect.x,rect.y);
+            gl.glTexCoord2f(0f, 1f);
+            gl.glVertex2d(rect.x+rect.w,rect.y);
+            gl.glTexCoord2f(1f, 1f);
+            gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
+            gl.glTexCoord2f(1f, 0f );
+            gl.glVertex2d(rect.x,rect.y+rect.h);
+            gl.glEnd();
+        } else {
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glVertex2d(rect.x,rect.y);
+            gl.glVertex2d(rect.x+rect.w,rect.y);
+            gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
+            gl.glVertex2d(rect.x,rect.y+rect.h);
+            gl.glEnd();
+        }
+        unapplyFill();
     }
 
     public void fill(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend) {
@@ -110,6 +127,9 @@ public class JoglGfx extends AbstractGfx {
         if(getFill() instanceof RadialGradient) {
             radialGradientShader.enable(gl,(RadialGradient)getFill());
         }
+        if(getFill() instanceof TextureFill) {
+            textureShader.enable(gl,(TextureFill)getFill());
+        }
     }
 
     private void unapplyFill() {
@@ -118,6 +138,9 @@ public class JoglGfx extends AbstractGfx {
         }
         if(getFill() instanceof RadialGradient) {
             radialGradientShader.disable(gl);
+        }
+        if(getFill() instanceof TextureFill) {
+            textureShader.disable(gl);
         }
     }
 
@@ -140,6 +163,13 @@ public class JoglGfx extends AbstractGfx {
     @Override
     public void translate(double x, double y) {
         gl.glTranslated(x,y,0);
+    }
+
+    @Override
+    public void rotate(double centerX, double centerY, double angle) {
+        gl.glTranslated(centerX,centerY,0);
+        gl.glRotated(angle, 0, 0, 1);
+        gl.glTranslated(-centerX, -centerY, 0);
     }
 
     GLU glu = new GLU();
