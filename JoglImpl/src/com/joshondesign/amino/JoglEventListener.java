@@ -20,8 +20,8 @@ import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
  * To change this template use File | Settings | File Templates.
  */
 public class JoglEventListener implements GLEventListener {
-    private int width;
-    private int height;
+    int width;
+    int height;
     private JoglGfx gfx;
     private JoglCore core;
     private JoglDrawer drawer;

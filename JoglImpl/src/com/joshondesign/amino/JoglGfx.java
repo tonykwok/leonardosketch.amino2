@@ -12,7 +12,9 @@ import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 
-import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.*;
+import static javax.media.opengl.GL.GL_TEXTURE0;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
 import static javax.media.opengl.GL2.GL_QUADS;
 
 /**
@@ -23,28 +25,180 @@ import static javax.media.opengl.GL2.GL_QUADS;
  * To change this template use File | Settings | File Templates.
  */
 public class JoglGfx extends AbstractGfx {
+    private static final boolean BUFFER_DEBUG = false;
+
+
+
+
     GL2 gl;
     private Shader copyBufferShader;
     private LinearGradientShader linearGradientShader;
     private RadialGradientShader radialGradientShader;
     private TextureShader textureShader;
+    private Buffer defaultBuffer;
+    private JoglEventListener master;
+    private Shader shadowBlurShader;
 
-    public JoglGfx(JoglEventListener joglEventListener, GL2 gl) {
+    public JoglGfx(JoglEventListener master, GL2 gl) {
+        this.master = master;
         this.gl = gl;
 
         copyBufferShader = Shader.load(gl,
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
-                JoglGfx.class.getResource("shaders/CheckerBoard.frag")
+                JoglGfx.class.getResource("shaders/CopyBuffer.frag")
         );
+        shadowBlurShader = Shader.load(gl,
+                JoglGfx.class.getResource("shaders/PassThrough.vert"),
+                JoglGfx.class.getResource("shaders/ShadowBlur.frag")
+        );
+
         linearGradientShader = new LinearGradientShader(gl);
         radialGradientShader = new RadialGradientShader(gl);
         textureShader = new TextureShader(gl);
+        defaultBuffer = new Buffer();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* ================ buffer stuff ================= */
+
+    public Buffer createBuffer(int width, int height) {
+        p("buffer created: " + width + " " + height);
+        FrameBufferObject buffer1 = FrameBufferObject.create(gl, width, height, false);
+        buffer1.bind(gl);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        buffer1.clear(gl);
+        gl.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return buffer1;
+    }
+
+    public Buffer getDefaultBuffer() {
+        return defaultBuffer;
+    }
+
+    public void copyBuffer(Rect sourceRect, Buffer sourceBuffer, Rect targetRect, Buffer targetBuffer, Blend blend) {
+        gl.glPushMatrix();
+        gl.glTranslated(targetRect.x,targetRect.y,0);
+        renderBufferWithShader(gl, copyBufferShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+        gl.glPopMatrix();
+    }
+
+    private void renderBufferWithShader(GL2 gl, Shader shader, FrameBufferObject source, Buffer target) {
+        //p("rendering from a buffer with a shader, source = " + source + " target = " + target);
+
+
+        //set the render target, if needed
+        if(target != null && target != getDefaultBuffer()) {
+            //p("rendering to a buffer");
+            gl.glPushMatrix();
+            gl.glTranslated(0,480-24,0);
+            gl.glScaled(1,-1,1);
+            FrameBufferObject tbuf = (FrameBufferObject) target;
+            tbuf.bind(gl);
+        }
+
+        //turn on the shader
+        shader.use(gl);
+        gl.glActiveTexture(GL_TEXTURE0);
+        gl.glBindTexture(GL_TEXTURE_2D, source.colorId);
+        shader.setIntParameter(gl, "tex0", 0);
+
+        //draw
+        gl.glBegin(GL_QUADS);
+            gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);
+            gl.glTexCoord2f(0f, 1f); gl.glVertex2f(0, source.getHeight());
+            gl.glTexCoord2f(1f, 1f); gl.glVertex2f( source.getWidth(), source.getHeight() );
+            gl.glTexCoord2f( 1f, 0f ); gl.glVertex2f(source.getWidth(), 0);
+        gl.glEnd();
+
+
+        //turn off the shader again
+        gl.glUseProgramObjectARB(0);
+        gl.glBindTexture(GL_TEXTURE_2D, 0);
+        gl.glActiveTexture(GL_TEXTURE0);
+        gl.glBindTexture(GL_TEXTURE_2D, 0);
+
+
+        ///debugging
+        if(BUFFER_DEBUG) {
+            Rect rect = Rect.build(0,0,100,100);
+            //fill with mint green
+            float r = 0; float g = 1.0f; float b = 0.5f; float a = 0.2f;
+            gl.glBegin(GL_QUADS);
+                gl.glColor4f(r,g,b,a); gl.glVertex2f(rect.x, rect.y);
+                gl.glColor4f(r,g,b,a); gl.glVertex2f(rect.x, rect.y+rect.h);
+                gl.glColor4f(r,g,b,a); gl.glVertex2f(rect.x+rect.w, rect.y+rect.h);
+                gl.glColor4f(r,g,b,a); gl.glVertex2f(rect.x+rect.w, rect.y);
+            gl.glEnd();
+        }
+
+        //restore the render target, if needed
+        if(target != null && target != getDefaultBuffer()) {
+            gl.glPopMatrix();
+            gl.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            //gl.glViewport(0, 0, joglGFX.width, joglGFX.height);
+        }
+
+
+    }
+
+
+    public void applyEffect(Rect sourceRect, Buffer sourceBuffer, Buffer targetBuffer, Effect effect) {
+        gl.glPushMatrix();
+        gl.glTranslated(0,0,0);
+
+        //if(effect instanceof BoxblurEffect) {
+        //    renderBufferWithShader(gl, boxBlurShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+        //}
+        if(effect instanceof DropshadowEffect) {
+            DropshadowEffect ds = (DropshadowEffect) effect;
+            gl.glTranslated(ds.x,-ds.y,0);
+            //render blur into buffer first
+            renderBufferWithShader(gl, shadowBlurShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+            //render original shape into buffer next
+            gl.glTranslated(-ds.x, ds.y, 0);
+            renderBufferWithShader(gl, copyBufferShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+        }
+        //if no effect, just copy from source to target buffer
+        if(effect == null) {
+            renderBufferWithShader(gl, copyBufferShader, (FrameBufferObject) sourceBuffer, targetBuffer);
+        }
+        gl.glPopMatrix();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* ======== Basic Fill Routines ============ */
+
+
     public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend) {
-        applyFill();
-        if(getFill() instanceof TextureFill) {
-            BufferedImage source = ((TextureFill)getFill()).img;
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        applyFill(fill);
+        if(fill instanceof TextureFill) {
+            BufferedImage source = ((TextureFill)fill).img;
             gl.glBegin(GL_QUADS);
             gl.glTexCoord2f(0f, 0f);
             gl.glVertex2d(rect.x,rect.y);
@@ -64,6 +218,7 @@ public class JoglGfx extends AbstractGfx {
             gl.glEnd();
         }
         unapplyFill();
+        gl.glColor4f(1,1,1,1);
     }
 
     public void fill(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend) {
@@ -81,20 +236,45 @@ public class JoglGfx extends AbstractGfx {
             gl.glBlendFunc(GL.GL_ONE, GL.GL_SRC_ALPHA);
         }
 
-        applyFill();
+        applyFill(fill);
+
+        if(buffer != null && buffer != defaultBuffer) {
+        //render the shape to a buffer
+            FrameBufferObject buf = (FrameBufferObject) buffer;
+            gl.glPushMatrix();
+            gl.glTranslated(0,480-24,0);
+            gl.glScaled(1,-1,1);
+            buf.bind(gl);
+            fillPath(path);
+            gl.glPopMatrix();
+            //reset
+            gl.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            gl.glViewport(0, 0, master.width, master.height);
+        } else {
+            //render shape to the screen
+            if(path.geometry == null) {
+                fillComplexPoly(path,true);
+            } else {
+                fillSavedGeometry(path);
+            }
+        }
+
+        unapplyFill();
+        gl.glColor4f(1,1,1,1);
+    }
+
+    private void fillPath(Path path) {
+        //draw
         if(path.geometry == null) {
             fillComplexPoly(path,true);
         } else {
             fillSavedGeometry(path);
         }
-        unapplyFill();
-        gl.glColor4f(1,1,1,1);
-        gl.glDisable(GL_BLEND);
     }
 
 
     public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
-        applyFill();
+        applyFill(fill);
         gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glVertex2d(rect.x,rect.y);
         gl.glVertex2d(rect.x+rect.w,rect.y);
@@ -106,29 +286,28 @@ public class JoglGfx extends AbstractGfx {
     public void draw(Path path, Fill fill, Buffer buffer, Rect clip) {
         gl.glEnable(GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        applyFill();
+        applyFill(fill);
         if(path.geometry == null) {
             fillComplexPoly(path,false);
         } else {
             fillSavedGeometry(path);
         }
         gl.glColor4f(1,1,1,1);
-        gl.glDisable(GL_BLEND);
     }
 
-    private void applyFill() {
-        if(this.getFill() instanceof Color) {
-            Color color = (Color) this.getFill();
+    private void applyFill(Fill fill) {
+        if(fill instanceof Color) {
+            Color color = (Color) fill;
             gl.glColor4d(color.r, color.g, color.b, color.a);
         }
-        if(getFill() instanceof LinearGradient) {
-            linearGradientShader.enable(gl, (LinearGradient) getFill());
+        if(fill instanceof LinearGradient) {
+            linearGradientShader.enable(gl, (LinearGradient) fill);
         }
-        if(getFill() instanceof RadialGradient) {
-            radialGradientShader.enable(gl,(RadialGradient)getFill());
+        if(fill instanceof RadialGradient) {
+            radialGradientShader.enable(gl,(RadialGradient)fill);
         }
-        if(getFill() instanceof TextureFill) {
-            textureShader.enable(gl,(TextureFill)getFill());
+        if(fill instanceof TextureFill) {
+            textureShader.enable(gl,(TextureFill)fill);
         }
     }
 

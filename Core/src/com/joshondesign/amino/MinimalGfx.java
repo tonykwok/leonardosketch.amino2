@@ -32,10 +32,10 @@ public interface MinimalGfx {
     //public void setTransform(Transform trans);
 
     //buffer management, effects & blending
-    //public Buffer createBuffer(int width, int height);
-    //public Buffer getDefaultBuffer();
-    //public void copyBuffer(Rect sourceRect, Buffer sourceBuffer, Rect targetRect, Buffer targetBuffer, BlendFunction blend);
-    //public void applyEffect(Rect sourceRect, Buffer sourceBuffer, Buffer targetBuffer, Effect effect);
+    public Buffer createBuffer(int width, int height);
+    public Buffer getDefaultBuffer();
+    public void copyBuffer(Rect sourceRect, Buffer sourceBuffer, Rect targetRect, Buffer targetBuffer, Blend blend);
+    public void applyEffect(Rect sourceRect, Buffer sourceBuffer, Buffer targetBuffer, Effect effect);
 
     //fills
     public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend);

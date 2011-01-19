@@ -3,11 +3,9 @@ package com.joshondesign.amino;
 /**
  * Created by IntelliJ IDEA.
  * User: joshmarinacci
- * Date: 1/16/11
- * Time: 9:44 PM
+ * Date: 1/18/11
+ * Time: 10:07 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Buffer {
-    Buffer() {
-    }
+public interface Effect {
 }
