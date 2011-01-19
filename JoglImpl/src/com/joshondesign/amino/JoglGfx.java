@@ -1,6 +1,7 @@
 package com.joshondesign.amino;
 
 import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.awt.AWTTextureIO;
 
 import javax.media.opengl.GL;
@@ -11,10 +12,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
+import java.nio.IntBuffer;
 
 import static javax.media.opengl.GL.*;
-import static javax.media.opengl.GL.GL_TEXTURE0;
-import static javax.media.opengl.GL.GL_TEXTURE_2D;
 import static javax.media.opengl.GL2.GL_QUADS;
 
 /**
@@ -39,6 +39,9 @@ public class JoglGfx extends AbstractGfx {
     private JoglEventListener master;
     private Shader shadowBlurShader;
     private Shader rippleShader;
+    private Texture movieTex;
+    private BufferedImage movieBI;
+    private TextureData movieTexData;
 
     public JoglGfx(JoglEventListener master, GL2 gl) {
         this.master = master;
@@ -463,6 +466,44 @@ public class JoglGfx extends AbstractGfx {
         return p;
     }
 
+    public void drawIntBuffer(IntBuffer intBuffer, int width, int height) {
+        //intBuffer = videoObject.getCurrentFrame();
+        if(movieTex == null) {
+            movieBI = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+            movieTexData = AWTTextureIO.newTextureData(movieBI, false);
+            movieTex = new Texture(movieTexData);
+        }
+
+
+        for(int y=0; y<movieBI.getHeight(); y++) {
+            for(int x=0; x<movieBI.getWidth(); x++) {
+                int i = intBuffer.get();
+                if(x < movieBI.getWidth()) {
+                    //p("setting: " + Integer.toHexString(i));
+                    movieBI.setRGB(x,y,i);
+                }
+            }
+        }
+        intBuffer.rewind();
+        movieTex.updateImage(movieTexData);
+
+        rippleShader.use(gl);
+        movieTex.enable();
+        movieTex.bind();
+        rippleShader.setIntParameter(gl, "tex0", 0);
+        //rippleShader.setFloatParameter(gl,"textureWidth",texture1.getImageWidth());
+        //rippleShader.setFloatParameter(gl,"textureHeight",texture1.getImageHeight());
+
+        gl.glBegin( GL_QUADS );
+            gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);
+            gl.glTexCoord2f( 0f, 1f ); gl.glVertex2f(0, movieTex.getImageHeight());
+            gl.glTexCoord2f( 1f, 1f ); gl.glVertex2f( movieTex.getImageWidth(), movieTex.getImageHeight() );
+            gl.glTexCoord2f( 1f, 0f ); gl.glVertex2f(movieTex.getImageWidth(), 0);
+        gl.glEnd();
+        movieTex.disable();
+        gl.glUseProgramObjectARB(0);
+
+    }
     public void drawImage(BufferedImage buf, int x, int y) {
         Texture tex = AWTTextureIO.newTexture(buf, false);
         tex.enable();
@@ -478,9 +519,9 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnd();*/
         gl.glBegin( GL_QUADS );
             gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);
-            gl.glTexCoord2f( 0f, 1f ); gl.glVertex2f( 0, 256 );
-            gl.glTexCoord2f( 1f, 1f ); gl.glVertex2f( 256, 256 );
-            gl.glTexCoord2f( 1f, 0f ); gl.glVertex2f(256, 0);
+            gl.glTexCoord2f( 0f, 1f ); gl.glVertex2f( 0, buf.getHeight() );
+            gl.glTexCoord2f( 1f, 1f ); gl.glVertex2f( buf.getWidth(), buf.getHeight() );
+            gl.glTexCoord2f( 1f, 0f ); gl.glVertex2f(buf.getWidth(), 0);
         gl.glEnd();
         tex.disable();
         tex.destroy(gl);

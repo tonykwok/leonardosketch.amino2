@@ -1,7 +1,8 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.*;
-import com.joshondesign.amino.Color;
+import com.joshondesign.amino.Core;
+import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.JoglGfx;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;
@@ -12,7 +13,6 @@ import org.gstreamer.elements.PlayBin;
 import org.gstreamer.elements.RGBDataSink;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.IntBuffer;
@@ -27,6 +27,9 @@ import java.nio.IntBuffer;
 public class SimpleVideoTest implements NodeCreator {
     private BufferedImage buf;
     private JComponent comp;
+    private IntBuffer buffer;
+    private int w;
+    private int h;
 
     public static void main(String ... args) throws Exception {
         Core.init("jogl");
@@ -71,29 +74,16 @@ public class SimpleVideoTest implements NodeCreator {
         float nanosec = gplayer.queryDuration().getNanoSeconds();
         p("sec = " + sec);
         p("nano sec = " + nanosec);
-        comp = new JComponent(){
-            @Override
-            protected void paintComponent(Graphics graphics) {
-                super.paintComponent(graphics);
-                Graphics2D g = (Graphics2D) graphics;
-                g.drawImage(buf,0,0,null);
-            }
-        };
         gplayer.play();
-        p("done starting to play");
-        JFrame frame = new JFrame("yo");
-        frame.setContentPane(comp);
-        frame.pack();
-        frame.setSize(400,400);
-        frame.show();
 
         return new ShapeNode() {
             @Override
             public void draw(Gfx gfx) {
-                gfx.drawRect(Rect.build(0, 0, 100, 100), Color.rgb(1,0,0),null,null);
+                //p("drawing buffer: " + buffer);
+                //gfx.drawRect(Rect.build(0, 0, 100, 100), Color.rgb(1,1,0),null,null);
                 JoglGfx g = (JoglGfx) gfx;
-                if(buf != null) {
-                    g.drawImage(buf,0,0);
+                if(buffer != null) {
+                    g.drawIntBuffer(buffer,w,h);
                 }
             }
         };
@@ -104,19 +94,9 @@ public class SimpleVideoTest implements NodeCreator {
     }
 
     private void invokeEvent(int w, int h, IntBuffer buffer) {
-        if(w != buf.getWidth() || h != buf.getHeight()) {
-            buf = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
-        }
-
-        for(int y=0; y<buf.getHeight(); y++) {
-            for(int x=0; x<w; x++) {
-                int i = buffer.get();
-                if(x < buf.getWidth()) {
-                    buf.setRGB(x,y,i);
-                }
-            }
-        }
-        comp.repaint();
+        this.buffer = buffer;
+        this.w = w;
+        this.h = h;
     }
     private static void eosEvent() {
         p("eos event");
