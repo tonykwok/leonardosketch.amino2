@@ -1,6 +1,9 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.*;
+import com.joshondesign.amino.Anim;
+import com.joshondesign.amino.Color;
+import com.joshondesign.amino.Core;
+import com.joshondesign.amino.TextureFill;
 import com.joshondesign.amino.nodes.*;
 
 import javax.imageio.ImageIO;
@@ -19,18 +22,19 @@ public class BasicAnimTest implements NodeCreator {
     }
 
     public static void main(String ... args) throws Exception {
-        Core.init("jogl");
+        Core.init("java2d");
         Core.getImpl().init(new BasicAnimTest());
     }
 
     public Node create() throws NoSuchMethodException {
         RectangleNode rect = new RectangleNode()
                 .setX(0).setY(0).setWidth(200).setHeight(100);
-        rect.setFill(Color.rgb(1, 1, 1));
+        rect.setFill(Color.rgb(1, 0, 1));
         Core.getImpl().add(new Anim(rect, "x", 0, 600, 6.0));
         Core.getImpl().add(new Anim(rect, "y", 300, 0, 10.0));
         Core.getImpl().add(new Anim(rect, "width",10,300,5.0));
         Core.getImpl().add(new Anim(rect, "height",300,10,10.0));
+
 
         OvalNode oval = new OvalNode().setX(0).setY(0).setWidth(300).setHeight(300);
         //RectangleNode oval = new RectangleNode().setX(0).setY(0).setWidth(300).setHeight(300);
@@ -44,6 +48,7 @@ public class BasicAnimTest implements NodeCreator {
         TransformNode trans = new TransformNode(oval);
         trans.setTranslateX(100);
         trans.setTranslateY(100);
+
         Core.getImpl().add(new Anim(trans,"translateX",0,360, 10.0));
 
         GroupNode group = new GroupNode();

@@ -12,6 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
 
 import static javax.media.opengl.GL.*;
@@ -474,7 +475,12 @@ public class JoglGfx extends AbstractGfx {
             movieTex = new Texture(movieTexData);
         }
 
-
+        //get an int array for the buffered image
+        DataBufferInt db = (DataBufferInt) movieBI.getRaster().getDataBuffer();
+        int[] data = db.getData();
+        //copy the pixel data into the buffered image's data.
+        intBuffer.get(data);
+        /*
         for(int y=0; y<movieBI.getHeight(); y++) {
             for(int x=0; x<movieBI.getWidth(); x++) {
                 int i = intBuffer.get();
@@ -483,9 +489,11 @@ public class JoglGfx extends AbstractGfx {
                     movieBI.setRGB(x,y,i);
                 }
             }
-        }
+        } */
         intBuffer.rewind();
+        //update the moview
         movieTex.updateImage(movieTexData);
+
 
         rippleShader.use(gl);
         movieTex.enable();

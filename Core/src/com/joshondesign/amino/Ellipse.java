@@ -8,10 +8,10 @@ package com.joshondesign.amino;
  * To change this template use File | Settings | File Templates.
  */
 public class Ellipse extends Shape {
-    private double x;
-    private double y;
-    private double w;
-    private double h;
+    double x;
+    double y;
+    double w;
+    double h;
     Ellipse() {
 
     }

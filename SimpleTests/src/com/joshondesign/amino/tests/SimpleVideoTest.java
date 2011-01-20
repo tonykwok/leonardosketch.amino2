@@ -30,6 +30,7 @@ public class SimpleVideoTest implements NodeCreator {
     private IntBuffer buffer;
     private int w;
     private int h;
+    private IntBuffer lastBuffer;
 
     public static void main(String ... args) throws Exception {
         Core.init("jogl");
@@ -79,11 +80,16 @@ public class SimpleVideoTest implements NodeCreator {
         return new ShapeNode() {
             @Override
             public void draw(Gfx gfx) {
-                //p("drawing buffer: " + buffer);
-                //gfx.drawRect(Rect.build(0, 0, 100, 100), Color.rgb(1,1,0),null,null);
+                if(buffer == null) return;
                 JoglGfx g = (JoglGfx) gfx;
-                if(buffer != null) {
-                    g.drawIntBuffer(buffer,w,h);
+
+                if(buffer != lastBuffer) {
+                    lastBuffer = buffer;
+                    //p("drawing buffer: " + buffer);
+                    //gfx.drawRect(Rect.build(0, 0, 100, 100), Color.rgb(1,1,0),null,null);
+                    g.drawIntBuffer(lastBuffer,w,h);
+                } else {
+                    g.drawIntBuffer(lastBuffer,w,h);
                 }
             }
         };

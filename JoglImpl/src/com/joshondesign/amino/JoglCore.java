@@ -51,6 +51,7 @@ public class JoglCore extends Core {
         frame.setSize(640,480);
         frame.add(canvas);
         frame.setVisible(true);
+        frame.setResizable(false);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -68,8 +69,6 @@ public class JoglCore extends Core {
         //animator.setRunAsFastAsPossible(true);
         animator.add(canvas);
         animator.start();
-
-
     }
 
     public Iterable<? extends Animateable> getAnimations() {
