@@ -4,6 +4,7 @@ import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.awt.AWTTextureIO;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
@@ -13,6 +14,9 @@ import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static javax.media.opengl.GL.*;
@@ -533,5 +537,40 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnd();
         tex.disable();
         tex.destroy(gl);
+    }
+
+    int count = 0;
+    public int readbackPixel(int px, int py) {
+        px++;
+        py++;
+        py = 480-22-py;
+        int w = 640;
+        int h = 480;
+
+
+        gl.glReadBuffer(GL.GL_BACK); // or GL.GL_BACK
+
+        ByteBuffer glBB = ByteBuffer.allocate(3 * w * h);
+        gl.glReadPixels(0, 0, w, h, GL2.GL_BGR, GL.GL_BYTE, glBB);
+
+        BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int b = 2 * glBB.get();
+                int g = 2 * glBB.get();
+                int r = 2 * glBB.get();
+                int val = (r << 16) | (g << 8) | b | 0xFF000000;
+                bi.setRGB(x,y,val);
+            }
+        }
+
+        try {
+            ImageIO.write(bi, "png", new FileOutputStream("testblah" + count + ".png"));
+            count++;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bi.getRGB(px,py);
     }
 }

@@ -71,6 +71,16 @@ class Java2DCore extends Core {
         });
     }
 
+    @Override
+    public void waitForRedraw() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int readbackPixel(int x, int y) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void drawNode(Java2DGfx gfx, Node root) {
         if(root instanceof GroupNode) {
             drawGroup(gfx,(GroupNode)root);

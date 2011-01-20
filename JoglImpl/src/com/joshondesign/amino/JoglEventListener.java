@@ -141,6 +141,17 @@ public class JoglEventListener implements GLEventListener {
         */
 
         JoglUtil.viewPerspective(gl);
+        if(core.doReadback) {
+            core.readbackValue = gfx.readbackPixel(core.doReadbackX, core.doReadbackY);
+        }
+        core.releaseWaiters();
+        /*
+        try {
+            Thread.currentThread().sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        */
     }
 
     private void p(String s) {

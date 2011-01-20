@@ -86,7 +86,7 @@ public class SimpleVideoTest implements NodeCreator {
                 if(buffer != lastBuffer) {
                     lastBuffer = buffer;
                     //p("drawing buffer: " + buffer);
-                    //gfx.drawRect(Rect.build(0, 0, 100, 100), Color.rgb(1,1,0),null,null);
+                    //gfx.testRect(Rect.build(0, 0, 100, 100), Color.rgb(1,1,0),null,null);
                     g.drawIntBuffer(lastBuffer,w,h);
                 } else {
                     g.drawIntBuffer(lastBuffer,w,h);

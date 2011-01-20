@@ -26,6 +26,11 @@ public class JoglCore extends Core {
     private List<Animateable> animateables;
     Node root;
     NodeCreator nodeCreator;
+    private String monitor = "MONITOR";
+    boolean doReadback;
+    int readbackValue;
+    int doReadbackX;
+    int doReadbackY;
 
     public JoglCore() {
         this.animateables = new ArrayList<Animateable>();
@@ -50,8 +55,8 @@ public class JoglCore extends Core {
         frame = new Frame("AWT Frame");
         frame.setSize(640,480);
         frame.add(canvas);
-        frame.setVisible(true);
         frame.setResizable(false);
+        frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -69,9 +74,36 @@ public class JoglCore extends Core {
         //animator.setRunAsFastAsPossible(true);
         animator.add(canvas);
         animator.start();
+        System.out.println("created a jogl frame");
+    }
+
+    @Override
+    public void waitForRedraw() {
+        try {
+            synchronized (monitor) {
+                monitor.wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Override
+    public int readbackPixel(int x, int y) {
+        doReadback = true;
+        doReadbackX = x;
+        doReadbackY = y;
+        waitForRedraw();
+        return readbackValue;
     }
 
     public Iterable<? extends Animateable> getAnimations() {
         return animateables;
+    }
+
+    public void releaseWaiters() {
+        synchronized (monitor) {
+            monitor.notify();
+        }
     }
 }

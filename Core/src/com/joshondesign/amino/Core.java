@@ -44,4 +44,8 @@ public abstract class Core {
         public abstract void done();
     }*/
 
+    public abstract void waitForRedraw();
+
+
+    public abstract int readbackPixel(int x, int y);
 }

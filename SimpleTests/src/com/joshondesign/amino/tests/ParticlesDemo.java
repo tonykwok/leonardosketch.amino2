@@ -110,7 +110,7 @@ public class ParticlesDemo implements NodeCreator {
             gfx.translate(x,y);
             gfx.fill(path);
             gfx.translate(-x,-y);
-            //gfx.drawRect(Rect.build((int)x,(int)y,10,10),color,null,null);
+            //gfx.testRect(Rect.build((int)x,(int)y,10,10),color,null,null);
         }
     }
 }
