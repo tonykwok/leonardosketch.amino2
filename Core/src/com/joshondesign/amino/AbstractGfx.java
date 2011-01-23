@@ -23,8 +23,9 @@ public abstract class AbstractGfx implements Gfx {
     private static class Context {
         public Fill fill;
         public Blend blend;
-        //public Effect effect;
-        //public Transform transform;
+        public Effect effect;
+        public Buffer buffer;
+        public Shape clip;
 
         public Context() {
         }
@@ -32,8 +33,9 @@ public abstract class AbstractGfx implements Gfx {
         public Context(Context parent) {
             this.fill = parent.fill;
             this.blend = parent.blend;
-            //this.effect = parent.effect;
-            //this.transform = parent.transform;
+            this.effect = parent.effect;
+            this.buffer = parent.buffer;
+            this.clip = parent.clip;
         }
     }
 
@@ -54,9 +56,17 @@ public abstract class AbstractGfx implements Gfx {
         return stack.peek().blend;
     }
 
-    /*public void setEffect(Effect effect) {
+    public void setTargetBuffer(Buffer buffer) {
+       stack.peek().buffer = buffer;
+    }
+
+    public void setEffect(Effect effect) {
         stack.peek().effect = effect;
-    } */
+    }
+
+    public void setClip(Path path) {
+        stack.peek().clip = path;
+    }
 
     public void translate(double x, double y) {
     }
@@ -68,11 +78,11 @@ public abstract class AbstractGfx implements Gfx {
     }
 
     public void draw(Shape shape) {
-        draw(shape.toPath(), stack.peek().fill, null, (Rect) null);
+        draw(shape.toPath(), stack.peek().fill, null, null, getBlend());
     }
 
     public void fill(Shape shape) {
-        fill(shape.toPath(), stack.peek().fill, null, (Rect)null, getBlend());
+        fill(shape.toPath(), stack.peek().fill, null, null, getBlend());
     }
 
     public void push() {

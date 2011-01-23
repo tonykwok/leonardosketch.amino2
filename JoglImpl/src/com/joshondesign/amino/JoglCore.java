@@ -80,6 +80,7 @@ public class JoglCore extends Core {
     @Override
     public void waitForRedraw() {
         try {
+            //Thread.sleep(5000);
             synchronized (monitor) {
                 monitor.wait();
             }

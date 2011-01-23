@@ -278,7 +278,7 @@ class Java2DGfx extends AbstractGfx {
     }
 
 
-    public void fill(Path path, Fill fill, Buffer buffer, Path clip) {
+    public void fill(Path path, Fill fill, Buffer buffer, Path clip, Blend blend) {
         setFill(fill);
         java.awt.geom.Path2D awtPath = toAwt(path);
         //drawRect with soft clipping
@@ -306,7 +306,7 @@ class Java2DGfx extends AbstractGfx {
         }
     }
 
-    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
+    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend) {
         setFill(fill);
         if(clip != null) {
             java.awt.Shape oldclip = g.getClip();
@@ -319,7 +319,7 @@ class Java2DGfx extends AbstractGfx {
 
     }
 
-    public void draw(Path path, Fill fill, Buffer buffer, Rect clip) {
+    public void draw(Path path, Fill fill, Buffer buffer, Rect clip,  Blend blend) {
         setFill(fill);
         java.awt.geom.Path2D awtPath = toAwt(path);
         if(clip != null) {
@@ -330,6 +330,10 @@ class Java2DGfx extends AbstractGfx {
         } else {
             g.draw(awtPath);
         }
+    }
+
+    public void draw(Path path, Fill fill, Buffer buffer, Path clip, Blend blend) {
+
     }
 
 

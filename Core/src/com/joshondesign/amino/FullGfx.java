@@ -17,7 +17,8 @@ public interface FullGfx {
     public void pop();
     public void setFill(Fill fill);
     public void setBlend(Blend blend);
-    //public void setEffect(Effect effect);
+    public void setTargetBuffer(Buffer buffer);
+    public void setEffect(Effect effect);
 
     //additive affine transforms
     public void translate(double x, double y);

@@ -39,13 +39,13 @@ public interface MinimalGfx {
 
     //fills
     public void fillRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend);
-    public void fill(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend);
-    //public void fill(Path path, Fill fill, Buffer buffer, Path clip);
+    public void fill(Path path, Fill fill, Buffer buffer, Path clip, Blend blend);
+    //public void fill(Path path, Fill fill, Buffer buffer, Path clip, Blend blend);
 
     //draws
-    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip);
-    public void draw(Path path, Fill fill, Buffer buffer, Rect clip);
-    //public void draw(Path path, Fill fill, Buffer buffer, Path clip);
+    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend);
+    //public void draw(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend);
+    public void draw(Path path, Fill fill, Buffer buffer, Path clip, Blend blend);
 
     //testing
     //public int readbackPixel(Buffer buffer, int x, int y);

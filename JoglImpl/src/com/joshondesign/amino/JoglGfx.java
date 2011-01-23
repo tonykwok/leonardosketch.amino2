@@ -242,7 +242,7 @@ public class JoglGfx extends AbstractGfx {
         gl.glColor4f(1,1,1,1);
     }
 
-    public void fill(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend) {
+    public void fill(Path path, Fill fill, Buffer buffer, Path clip, Blend blend) {
         //p("doing a standard path fill:" + path + " " + fill + " ");
         gl.glEnable(GL_BLEND);
         //gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
@@ -301,7 +301,7 @@ public class JoglGfx extends AbstractGfx {
     }
 
 
-    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip) {
+    public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend) {
         applyFill(fill);
         gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glVertex2d(rect.x,rect.y);
@@ -311,7 +311,7 @@ public class JoglGfx extends AbstractGfx {
         gl.glEnd();
     }
 
-    public void draw(Path path, Fill fill, Buffer buffer, Rect clip) {
+    public void draw(Path path, Fill fill, Buffer buffer, Path clip, Blend blend) {
         gl.glEnable(GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         applyFill(fill);

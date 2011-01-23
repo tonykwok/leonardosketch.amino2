@@ -13,6 +13,8 @@ public class Util {
     public static final Color RED = Color.rgb(0xff0000);
     public static final Color GREEN = Color.rgb(0x00ff00);
     public static final Color BLUE = Color.rgb(0x0000ff);
+    public static final Color MAGENTA = Color.rgb(0xff00ff);
+    public static final Color ORANGE = Color.rgb(0x00ffff);
 
     public static double random(double min, double max) {
         return Math.random()*(max-min) + min;
