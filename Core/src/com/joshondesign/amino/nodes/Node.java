@@ -1,5 +1,7 @@
 package com.joshondesign.amino.nodes;
 
+import com.joshondesign.amino.Gfx;
+
 /**
  * Created by IntelliJ IDEA.
  * User: joshmarinacci
@@ -7,5 +9,6 @@ package com.joshondesign.amino.nodes;
  * Time: 9:03 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Node {
+public abstract class Node {
+    public abstract void draw(Gfx gfx);
 }

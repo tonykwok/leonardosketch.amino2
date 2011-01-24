@@ -11,6 +11,7 @@ public class Path extends Shape implements Iterable<Path.Segment> {
     int geometryType;
     private List<double[]> points;
     double[][] geometry = null;
+    private boolean closed = false;
 
     private Path() {      }
 
@@ -65,6 +66,10 @@ public class Path extends Shape implements Iterable<Path.Segment> {
         points = null;
     }
 
+    public boolean isClosed() {
+        return closed;
+    }
+
     public enum Type { MoveTo, LineTo, CurveTo, CloseTo }
 
     public Iterator<Segment> iterator() {
@@ -99,6 +104,8 @@ public class Path extends Shape implements Iterable<Path.Segment> {
     public static class PathBuilder {
 
         private Path path;
+
+
         private PathBuilder(double x, double y) {
             path = new Path();
             path.segments.add(new Segment(Type.MoveTo,x,y));
@@ -115,6 +122,7 @@ public class Path extends Shape implements Iterable<Path.Segment> {
 
         public PathBuilder closeTo() {
             path.segments.add(new Segment(Type.CloseTo,0,0));
+            path.closed = true;
             return this;
         }
         public Path build() {

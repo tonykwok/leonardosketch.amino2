@@ -106,6 +106,7 @@ public class ParticlesDemo implements NodeCreator {
 
         @Override
         public void draw(Gfx gfx) {
+            gfx.setBlend(Blend.Add);
             gfx.setFill(color);
             gfx.translate(x,y);
             gfx.fill(path);

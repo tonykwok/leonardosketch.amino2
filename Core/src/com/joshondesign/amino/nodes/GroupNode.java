@@ -1,5 +1,7 @@
 package com.joshondesign.amino.nodes;
 
+import com.joshondesign.amino.Gfx;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,5 +22,10 @@ public class GroupNode extends Node {
 
     public Iterable<? extends Node> getChildren() {
         return this.nodes;
+    }
+
+    @Override
+    public void draw(Gfx gfx) {
+
     }
 }

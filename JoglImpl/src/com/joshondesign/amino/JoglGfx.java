@@ -11,6 +11,7 @@ import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
+import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -304,7 +305,7 @@ public class JoglGfx extends AbstractGfx {
     public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend) {
         applyFill(fill);
         gl.glBegin(GL2.GL_LINE_LOOP);
-        gl.glVertex2d(rect.x,rect.y);
+        gl.glVertex2d(rect.x, rect.y);
         gl.glVertex2d(rect.x+rect.w,rect.y);
         gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
         gl.glVertex2d(rect.x,rect.y+rect.h);
@@ -316,7 +317,11 @@ public class JoglGfx extends AbstractGfx {
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         applyFill(fill);
         if(path.geometry == null) {
-            fillComplexPoly(path,false);
+            if(path.isClosed()) {
+                fillComplexPoly(path,false);
+            } else {
+                drawOpenPoly(path);
+            }
         } else {
             fillSavedGeometry(path);
         }
@@ -449,6 +454,37 @@ public class JoglGfx extends AbstractGfx {
         path.endPoints();
         gl.glPopMatrix();
     }
+
+    private void drawOpenPoly(Path path) {
+        Path2D pth = toAwt(path);
+        PathIterator it = pth.getPathIterator(new AffineTransform());
+        it = new FlatteningPathIterator(it,0.5);
+        boolean closed = false;
+        double[] coords = new double[6];
+        gl.glBegin(GL2.GL_LINE_LOOP);
+        //gl.glVertex2d(rect.x, rect.y);
+        //gl.glVertex2d(rect.x+rect.w,rect.y);
+        //gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
+        //gl.glVertex2d(rect.x,rect.y+rect.h);
+
+        while(true) {
+            if(it.isDone()) break;
+            int type = it.currentSegment(coords);
+            switch (type) {
+                case PathIterator.SEG_MOVETO:
+                    gl.glVertex2d(coords[0],coords[1]);
+                    break;
+                case PathIterator.SEG_LINETO:
+                    gl.glVertex2d(coords[0],coords[1]);
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    break;
+            }
+            it.next();
+        }
+        gl.glEnd();
+    }
+
 
     private static java.awt.geom.Path2D toAwt(Path path) {
         java.awt.geom.Path2D p = new java.awt.geom.Path2D.Double();

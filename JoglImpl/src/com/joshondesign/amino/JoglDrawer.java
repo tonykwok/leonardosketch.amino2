@@ -16,13 +16,18 @@ public class JoglDrawer {
     public void drawNode(JoglGfx gfx, Node root) {
         if(root instanceof GroupNode) {
             drawGroup(gfx,(GroupNode)root);
+            return;
         }
         if(root instanceof ShapeNode) {
             drawShape(gfx, (ShapeNode) root);
+            return;
         }
         if(root instanceof TransformNode) {
             drawTransform(gfx, (TransformNode) root);
+            return;
         }
+
+        root.draw(gfx);
 
     }
 

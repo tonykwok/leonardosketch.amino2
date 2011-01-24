@@ -1,5 +1,7 @@
 package com.joshondesign.amino.nodes;
 
+import com.joshondesign.amino.Gfx;
+
 /**
  * Created by IntelliJ IDEA.
  * User: joshmarinacci
@@ -47,4 +49,8 @@ public class TransformNode extends Node {
         return node;
     }
 
+    @Override
+    public void draw(Gfx gfx) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
