@@ -1,8 +1,6 @@
 package com.joshondesign.amino.nodes;
 
-import com.joshondesign.amino.Blend;
-import com.joshondesign.amino.Gfx;
-import com.joshondesign.amino.Rect;
+import com.joshondesign.amino.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +14,8 @@ public class RectangleNode extends ShapeNode {
     private double y;
     private double width;
     private double height;
+    private double corner;
+    private double opacity = 1.0;
 
     public RectangleNode setX(double x) {
         this.x = x;
@@ -40,8 +40,44 @@ public class RectangleNode extends ShapeNode {
     @Override
     public void draw(Gfx gfx) {
         gfx.setFill(getFill());
-        Rect rect = Rect.build((int) x, (int) y, (int) width, (int) height);
-        gfx.fillRect(rect,getFill(),null,null, Blend.Normal);
+        if(corner > 0) {
+            Path path = Path.moveTo(x+corner,y)
+                    .lineTo(x + width - corner, y)
+                    .curveTo(x + width - corner / 2, y, x + width, y + corner / 2, x + width, y + corner)
+                    .lineTo(x + width, y + height - corner)
+                    .curveTo(x + width, y + height - corner / 2, x + width - corner / 2, y + height, x + width - corner, y + height)
+                    .lineTo(x + corner, y + height)
+                    .curveTo(x + corner / 2, y + height, x, y + height - corner / 2, x, y + height - corner)
+                    .lineTo(x, y + corner)
+                    .curveTo(x, y + corner / 2, x + corner / 2, y, x + corner, y)
+                    .closeTo()
+                    .build();
+            gfx.fill(path, getFill(), null, null, Blend.Normal);
+            if(getStroke() != null) {
+                gfx.draw(path, getStroke(), null, null, Blend.Normal);
+            }
+        } else {
+            Rectangle rect = Rectangle.build(x, y, width, height);
+            if(getOpacity() != 1.0) {
+                Color color = (Color) getFill();
+                color = color.deriveAlpha(getOpacity());
+                gfx.fill(rect.toPath(), color, null, null, Blend.Normal);
+            } else {
+                gfx.fill(rect.toPath(), getFill(), null, null, Blend.Normal);
+            }
+            if(getStroke() != null) {
+                gfx.draw(rect.toPath(), getStroke(), null, null, Blend.Normal);
+            }
+        }
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        if(point.getX() < getX()) return false;
+        if(point.getX() > getX()+getWidth()) return false;
+        if(point.getY() < getY()) return false;
+        if(point.getY() > getY()+getHeight()) return false;
+        return true;
     }
 
     public double getX() {
@@ -58,5 +94,22 @@ public class RectangleNode extends ShapeNode {
 
     public double getHeight() {
         return height;
+    }
+
+    public double getCorner() {
+        return corner;
+    }
+
+    public RectangleNode setCorner(double corner) {
+        this.corner = corner;
+        return this;
+    }
+
+    public void setOpacity(double opacity) {
+        this.opacity = opacity;
+    }
+
+    public double getOpacity() {
+        return opacity;
     }
 }

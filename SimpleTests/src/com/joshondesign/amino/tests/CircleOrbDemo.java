@@ -26,6 +26,11 @@ public class CircleOrbDemo implements NodeCreator{
                 }
                 tick += 0.02;
             }
+
+            @Override
+            public boolean contains(Point point) {
+                return false;  //To change body of implemented methods use File | Settings | File Templates.
+            }
         };
     }
 }

@@ -146,6 +146,11 @@ public class CustomNodeTest implements NodeCreator {
                         Rect.build(0, 0, 300, 300), gfx.getDefaultBuffer(),
                         Blend.Normal);
             }
+
+            @Override
+            public boolean contains(Point point) {
+                return false;  //To change body of implemented methods use File | Settings | File Templates.
+            }
         };
     }
     private static void clear(Gfx gfx) {

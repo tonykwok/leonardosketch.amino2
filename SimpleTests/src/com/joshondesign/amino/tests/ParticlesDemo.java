@@ -108,10 +108,15 @@ public class ParticlesDemo implements NodeCreator {
         public void draw(Gfx gfx) {
             gfx.setBlend(Blend.Add);
             gfx.setFill(color);
-            gfx.translate(x,y);
+            gfx.translate(x, y);
             gfx.fill(path);
-            gfx.translate(-x,-y);
+            gfx.translate(-x, -y);
             //gfx.testRect(Rect.build((int)x,(int)y,10,10),color,null,null);
+        }
+
+        @Override
+        public boolean contains(Point point) {
+            return false;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 }

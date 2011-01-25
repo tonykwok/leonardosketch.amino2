@@ -2,6 +2,7 @@ package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Ellipse;
 import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.Point;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,5 +41,10 @@ public class OvalNode extends ShapeNode {
     public void draw(Gfx gfx) {
         gfx.setFill(getFill());
         gfx.fill(Ellipse.build(x,y,width,height));
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

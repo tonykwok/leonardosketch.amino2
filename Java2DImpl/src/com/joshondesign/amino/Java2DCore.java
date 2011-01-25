@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.event.EventBus;
 import com.joshondesign.amino.nodes.*;
 
 import javax.swing.*;
@@ -79,6 +80,11 @@ class Java2DCore extends Core {
     @Override
     public int readbackPixel(int x, int y) {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void drawNode(Java2DGfx gfx, Node root) {

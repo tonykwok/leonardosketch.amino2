@@ -3,6 +3,7 @@ package com.joshondesign.amino.tests;
 import com.joshondesign.amino.Core;
 import com.joshondesign.amino.Gfx;
 import com.joshondesign.amino.JoglGfx;
+import com.joshondesign.amino.Point;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;
@@ -85,12 +86,15 @@ public class SimpleVideoTest implements NodeCreator {
 
                 if(buffer != lastBuffer) {
                     lastBuffer = buffer;
-                    //p("drawing buffer: " + buffer);
-                    //gfx.testRect(Rect.build(0, 0, 100, 100), Color.rgb(1,1,0),null,null);
                     g.drawIntBuffer(lastBuffer,w,h);
                 } else {
                     g.drawIntBuffer(lastBuffer,w,h);
                 }
+            }
+
+            @Override
+            public boolean contains(Point point) {
+                return false;
             }
         };
     }

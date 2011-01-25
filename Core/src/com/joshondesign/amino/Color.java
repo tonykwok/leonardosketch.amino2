@@ -51,6 +51,10 @@ public class Color extends Fill {
                 + (((int)(b*255))<<0)
                 ;
     }
+
+    public Color deriveAlpha(double opacity) {
+        return new Color(r,g,b,opacity);
+    }
 }
 
 

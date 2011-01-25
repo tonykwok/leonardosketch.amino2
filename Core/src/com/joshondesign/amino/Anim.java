@@ -17,11 +17,11 @@ public class Anim implements Animateable {
     private String property;
     private double startValue;
     private double endValue;
-    private double cycleDuration;
+    protected double cycleDuration;
     private Method getMethod;
     private Method setMethod;
     private double currentValue;
-    private long personalStart;
+    protected long personalStart;
     private boolean autoReverse;
     private boolean direction = true;
 
@@ -32,8 +32,8 @@ public class Anim implements Animateable {
         this.endValue = endValue;
         this.cycleDuration = cycleDuration;
 
-        String getter = "get" + property.substring(0, 1).toUpperCase() + property.substring(1);
-        String setter = "set"+property.substring(0,1).toUpperCase()+property.substring(1);
+        String getter = "get" + property.substring(0,1).toUpperCase() + property.substring(1);
+        String setter = "set" + property.substring(0,1).toUpperCase() + property.substring(1);
         getMethod = this.node.getClass().getMethod(getter);
         setMethod = this.node.getClass().getMethod(setter,double.class);
         this.currentValue = startValue;
@@ -42,30 +42,40 @@ public class Anim implements Animateable {
 
     public void process(long startTime, long currentTime) throws InvocationTargetException, IllegalAccessException {
         long elapsedNano = currentTime/1000-personalStart/1000;
+        // p("elapsed nano " + elapsedNano);
 
         long duration = (int)(cycleDuration*1000*1000);
 
         double fract = ((double)elapsedNano)/((double)duration);
-        if(!direction) {
-            fract = 1.0-fract;
-        }
-        double value = startValue + (endValue-startValue)*fract;
-        setMethod.invoke(node,new Object[]{value});
+        setFraction(fract);
 
         //loop
+        calculateReverse(fract);
+
+    }
+
+    public void calculateReverse(double fract) {
         if(fract >= 1.0) {
             personalStart = System.nanoTime();
             if(autoReverse) {
                 direction = !direction;
             }
         }
+
         if(fract < 0.0) {
             personalStart = System.nanoTime();
             if(autoReverse) {
                 direction = !direction;
             }
         }
+    }
 
+    public void setFraction(double fract) throws InvocationTargetException, IllegalAccessException {
+        if(!direction) {
+            fract = 1.0-fract;
+        }
+        double value = startValue + (endValue-startValue)*fract;
+        setMethod.invoke(node,new Object[]{value});
     }
 
     private void p(String s) {

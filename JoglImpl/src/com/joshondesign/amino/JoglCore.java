@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.event.EventBus;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.sun.opengl.util.Animator;
@@ -8,8 +9,7 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class JoglCore extends Core {
     int readbackValue;
     int doReadbackX;
     int doReadbackY;
+    private EventBus eventBus = new EventBus();
 
     public JoglCore() {
         this.animateables = new ArrayList<Animateable>();
@@ -52,7 +53,7 @@ public class JoglCore extends Core {
         GLCapabilities caps = new GLCapabilities(glp);
         canvas = new GLCanvas(caps);
 
-        frame = new Frame("AWT Frame");
+        frame = new Frame("AWTs Frame");
         frame.setSize(640,480);
         frame.add(canvas);
         frame.setResizable(false);
@@ -62,6 +63,36 @@ public class JoglCore extends Core {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 System.exit(0);
+            }
+        });
+
+        canvas.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+            }
+
+            public void mousePressed(MouseEvent mouseEvent) {
+                publish(mouseEvent);
+            }
+
+            public void mouseReleased(MouseEvent mouseEvent) {
+            }
+
+            public void mouseEntered(MouseEvent mouseEvent) {
+            }
+
+            public void mouseExited(MouseEvent mouseEvent) {
+            }
+        });
+        canvas.addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent mouseEvent) {
+            }
+
+            public void mouseMoved(MouseEvent mouseEvent) {
+                com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
+                    new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+                    com.joshondesign.amino.event.MouseEvent.Moved
+                );
+                getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Moved, event);
             }
         });
 
@@ -75,6 +106,16 @@ public class JoglCore extends Core {
         animator.add(canvas);
         animator.start();
         System.out.println("created a jogl frame");
+
+        frame.requestFocus();
+    }
+
+    private void publish(MouseEvent mouseEvent) {
+        com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
+            new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+            com.joshondesign.amino.event.MouseEvent.Pressed
+        );
+        getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Pressed, event);
     }
 
     @Override
@@ -96,6 +137,11 @@ public class JoglCore extends Core {
         doReadbackY = y;
         waitForRedraw();
         return readbackValue;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     public Iterable<? extends Animateable> getAnimations() {

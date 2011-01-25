@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.event.EventBus;
 import com.joshondesign.amino.nodes.NodeCreator;
 
 /**
@@ -48,4 +49,6 @@ public abstract class Core {
 
 
     public abstract int readbackPixel(int x, int y);
+
+    public abstract EventBus getEventBus();
 }

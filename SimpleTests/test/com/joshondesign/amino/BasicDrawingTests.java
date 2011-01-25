@@ -69,6 +69,11 @@ public class BasicDrawingTests {
                     public void draw(Gfx gfx) {
                         testRectImpl(gfx);
                     }
+
+                    @Override
+                    public boolean contains(Point point) {
+                        return false;  //To change body of implemented methods use File | Settings | File Templates.
+                    }
                 };
             }
         });
