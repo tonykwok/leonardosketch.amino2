@@ -1,5 +1,7 @@
 package com.joshondesign.amino;
 
+import java.nio.IntBuffer;
+
 /*
 
 what is the minimal 2D api?
@@ -46,6 +48,7 @@ public interface MinimalGfx {
     public void drawRect(Rect rect, Fill fill, Buffer buffer, Rect clip, Blend blend);
     //public void draw(Path path, Fill fill, Buffer buffer, Rect clip, Blend blend);
     public void draw(Path path, Fill fill, Buffer buffer, Path clip, Blend blend);
+    void drawIntBuffer(IntBuffer lastBuffer, int width, int height);
 
     //testing
     //public int readbackPixel(Buffer buffer, int x, int y);

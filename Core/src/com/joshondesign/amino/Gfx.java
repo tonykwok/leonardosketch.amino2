@@ -8,5 +8,5 @@ package com.joshondesign.amino;
  * To change this template use File | Settings | File Templates.
  */
 public interface Gfx extends MinimalGfx, FullGfx {
-    public void setClip(Path build);
+
 }

@@ -13,8 +13,6 @@ import org.gstreamer.GstObject;
 import org.gstreamer.elements.PlayBin;
 import org.gstreamer.elements.RGBDataSink;
 
-import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.IntBuffer;
 
@@ -26,8 +24,8 @@ import java.nio.IntBuffer;
  * To change this template use File | Settings | File Templates.
  */
 public class SimpleVideoTest implements NodeCreator {
-    private BufferedImage buf;
-    private JComponent comp;
+    //private BufferedImage buf;
+    //private JComponent comp;
     private IntBuffer buffer;
     private int w;
     private int h;
@@ -40,7 +38,7 @@ public class SimpleVideoTest implements NodeCreator {
 
     public Node create() throws NoSuchMethodException {
 
-        buf = new BufferedImage(200,200,BufferedImage.TYPE_INT_ARGB);
+        //buf = new BufferedImage(200,200,BufferedImage.TYPE_INT_ARGB);
         Gst.setUseDefaultContext(true);
         String[] args = new String[0];
         Gst.init("GSVideo", args);

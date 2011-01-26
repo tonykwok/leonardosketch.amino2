@@ -53,7 +53,7 @@ public class JoglCore extends Core {
         GLCapabilities caps = new GLCapabilities(glp);
         canvas = new GLCanvas(caps);
 
-        frame = new Frame("AWTs Frame");
+        frame = new Frame("Amino 2 with JOGL Core");
         frame.setSize(640,480);
         frame.add(canvas);
         frame.setResizable(false);

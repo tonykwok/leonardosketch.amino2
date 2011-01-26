@@ -506,7 +506,7 @@ public class JoglGfx extends AbstractGfx {
     }
 
     public void drawIntBuffer(IntBuffer intBuffer, int width, int height) {
-        //intBuffer = videoObject.getCurrentFrame();
+        //create a texture if needed
         if(movieTex == null) {
             movieBI = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
             movieTexData = AWTTextureIO.newTextureData(movieBI, false);
@@ -516,29 +516,22 @@ public class JoglGfx extends AbstractGfx {
         //get an int array for the buffered image
         DataBufferInt db = (DataBufferInt) movieBI.getRaster().getDataBuffer();
         int[] data = db.getData();
+
         //copy the pixel data into the buffered image's data.
         intBuffer.get(data);
-        /*
-        for(int y=0; y<movieBI.getHeight(); y++) {
-            for(int x=0; x<movieBI.getWidth(); x++) {
-                int i = intBuffer.get();
-                if(x < movieBI.getWidth()) {
-                    //p("setting: " + Integer.toHexString(i));
-                    movieBI.setRGB(x,y,i);
-                }
-            }
-        } */
+        //rewind the intbuffer so it can be used again
         intBuffer.rewind();
         //update the moview
         movieTex.updateImage(movieTexData);
 
 
-        rippleShader.use(gl);
+        //turn on the shader
+        copyBufferShader.use(gl);
+        //rippleShader.use(gl);
         movieTex.enable();
         movieTex.bind();
-        rippleShader.setIntParameter(gl, "tex0", 0);
-        //rippleShader.setFloatParameter(gl,"textureWidth",texture1.getImageWidth());
-        //rippleShader.setFloatParameter(gl,"textureHeight",texture1.getImageHeight());
+        //rippleShader.setIntParameter(gl, "tex0", 0);
+        copyBufferShader.setIntParameter(gl, "tex0",0);
 
         gl.glBegin( GL_QUADS );
             gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);

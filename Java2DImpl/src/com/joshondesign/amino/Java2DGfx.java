@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.nio.IntBuffer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -334,6 +335,10 @@ class Java2DGfx extends AbstractGfx {
 
     public void draw(Path path, Fill fill, Buffer buffer, Path clip, Blend blend) {
 
+    }
+
+    public void drawIntBuffer(IntBuffer lastBuffer, int width, int height) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 
