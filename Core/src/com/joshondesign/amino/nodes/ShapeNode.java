@@ -2,7 +2,6 @@ package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Fill;
 import com.joshondesign.amino.Gfx;
-import com.joshondesign.amino.Point;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,8 +23,6 @@ public abstract class ShapeNode extends Node {
     }
 
     public abstract void draw(Gfx gfx);
-
-    public abstract boolean contains(Point point);
 
     public void setStroke(Fill stroke) {
         this.stroke = stroke;

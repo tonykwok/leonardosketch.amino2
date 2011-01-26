@@ -23,4 +23,8 @@ public class DropshadowEffect implements Effect {
     public static DropshadowEffect build(double xOffset, double yOffset, double radius, Color color) {
         return new DropshadowEffect(xOffset,yOffset,radius,color);
     }
+
+    public Color getColor() {
+        return color;
+    }
 }

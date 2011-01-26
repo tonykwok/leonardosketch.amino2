@@ -2,6 +2,7 @@ package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Blend;
 import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.Point;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,6 +20,11 @@ public class BlendNode extends Node {
     @Override
     public void draw(Gfx gfx) {
 
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setNode1(Node image1) {

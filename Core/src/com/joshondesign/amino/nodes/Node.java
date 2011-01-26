@@ -1,6 +1,7 @@
 package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.Point;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,4 +12,5 @@ import com.joshondesign.amino.Gfx;
  */
 public abstract class Node {
     public abstract void draw(Gfx gfx);
+    public abstract boolean contains(Point point);
 }

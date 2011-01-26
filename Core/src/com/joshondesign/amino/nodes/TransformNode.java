@@ -1,6 +1,7 @@
 package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.Point;
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,5 +53,10 @@ public class TransformNode extends Node {
     @Override
     public void draw(Gfx gfx) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        return node.contains(point.subtract(getTranslateX(),getTranslateY()));
     }
 }

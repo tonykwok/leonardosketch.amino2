@@ -49,7 +49,7 @@ public class Shader {
 
     public void setVec4Parameter(GL2 gl, String parameter, float r, float g, float b, float a) {
         int loc = gl.glGetUniformLocationARB(id, parameter );
-        gl.glUniform4f(loc,r,g,b,a);
+        gl.glUniform4fARB(loc,r,g,b,a);
     }
 
     public void setVec2Parameter(GL2 gl, String parameter, Point pt) {

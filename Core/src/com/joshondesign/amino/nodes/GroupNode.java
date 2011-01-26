@@ -1,6 +1,7 @@
 package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,5 +28,13 @@ public class GroupNode extends Node {
     @Override
     public void draw(Gfx gfx) {
 
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        for(Node n : nodes) {
+            if(n.contains(point)) return true;
+        }
+        return false;
     }
 }

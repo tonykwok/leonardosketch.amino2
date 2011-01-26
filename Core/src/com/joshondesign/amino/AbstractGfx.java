@@ -82,7 +82,7 @@ public abstract class AbstractGfx implements Gfx {
     }
 
     public void fill(Shape shape) {
-        fill(shape.toPath(), stack.peek().fill, null, null, getBlend());
+        fill(shape.toPath(), stack.peek().fill, stack.peek().buffer, null, getBlend());
     }
 
     public void push() {

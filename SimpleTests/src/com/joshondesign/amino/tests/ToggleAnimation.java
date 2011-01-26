@@ -4,7 +4,7 @@ import com.joshondesign.amino.Anim;
 import com.joshondesign.amino.Core;
 import com.joshondesign.amino.event.Callback;
 import com.joshondesign.amino.event.MouseEvent;
-import com.joshondesign.amino.nodes.ShapeNode;
+import com.joshondesign.amino.nodes.Node;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -17,12 +17,12 @@ import java.lang.reflect.InvocationTargetException;
 */
 class ToggleAnimation extends Anim implements Callback<MouseEvent> {
 
-    private ShapeNode shape;
+    private Node shape;
     private boolean going = false;
     private boolean opened;
     private MouseEvent last;
 
-    public ToggleAnimation(ShapeNode node, String property, double going, double end, double time, String ... eventKey) throws NoSuchMethodException {
+    public ToggleAnimation(Node node, String property, double going, double end, double time, String ... eventKey) throws NoSuchMethodException {
         super(node,property, going,end,time);
         shape = node;
         setAutoReverse(true);

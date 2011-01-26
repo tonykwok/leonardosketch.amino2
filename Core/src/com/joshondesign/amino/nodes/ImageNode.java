@@ -1,6 +1,7 @@
 package com.joshondesign.amino.nodes;
 
 import com.joshondesign.amino.Gfx;
+import com.joshondesign.amino.Point;
 
 import java.net.URL;
 
@@ -19,5 +20,10 @@ public class ImageNode extends Node {
     @Override
     public void draw(Gfx gfx) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

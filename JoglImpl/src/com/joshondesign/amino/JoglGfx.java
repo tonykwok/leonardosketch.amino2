@@ -43,7 +43,7 @@ public class JoglGfx extends AbstractGfx {
     private TextureShader textureShader;
     private Buffer defaultBuffer;
     private JoglEventListener master;
-    private Shader shadowBlurShader;
+    private ShadowBlurShader shadowBlurShader;
     private Shader rippleShader;
     private Texture movieTex;
     private BufferedImage movieBI;
@@ -57,10 +57,10 @@ public class JoglGfx extends AbstractGfx {
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
                 JoglGfx.class.getResource("shaders/CopyBuffer.frag")
         );
-        shadowBlurShader = Shader.load(gl,
+        /*shadowBlurShader = Shader.load(gl,
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
                 JoglGfx.class.getResource("shaders/ShadowBlur.frag")
-        );
+        );*/
         rippleShader = Shader.load(gl,
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
                 JoglGfx.class.getResource("shaders/Ripple.frag"));
@@ -68,6 +68,7 @@ public class JoglGfx extends AbstractGfx {
         linearGradientShader = new LinearGradientShader(gl);
         radialGradientShader = new RadialGradientShader(gl);
         textureShader = new TextureShader(gl);
+        shadowBlurShader = new ShadowBlurShader(gl);
         defaultBuffer = new Buffer();
     }
 
@@ -181,6 +182,7 @@ public class JoglGfx extends AbstractGfx {
             DropshadowEffect ds = (DropshadowEffect) effect;
             gl.glTranslated(ds.x,-ds.y,0);
             //render blur into buffer first
+            shadowBlurShader.setEffect(ds);
             renderBufferWithShader(gl, shadowBlurShader, source, targetBuffer);
             //render original shape into buffer next
             gl.glTranslated(-ds.x, ds.y, 0);

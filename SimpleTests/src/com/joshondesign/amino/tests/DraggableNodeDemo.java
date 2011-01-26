@@ -54,6 +54,11 @@ public class DraggableNodeDemo implements NodeCreator {
             gfx.translate(-x,-y);
         }
 
+        @Override
+        public boolean contains(Point point) {
+            return false;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
         public void connect(DraggableNode dn2) {
             target = dn2;
         }

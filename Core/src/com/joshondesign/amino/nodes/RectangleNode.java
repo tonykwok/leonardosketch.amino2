@@ -61,9 +61,11 @@ public class RectangleNode extends ShapeNode {
             if(getOpacity() != 1.0) {
                 Color color = (Color) getFill();
                 color = color.deriveAlpha(getOpacity());
-                gfx.fill(rect.toPath(), color, null, null, Blend.Normal);
+                gfx.setFill(color);
+                gfx.fill(rect.toPath());
             } else {
-                gfx.fill(rect.toPath(), getFill(), null, null, Blend.Normal);
+                gfx.setFill(getFill());
+                gfx.fill(rect.toPath());
             }
             if(getStroke() != null) {
                 gfx.draw(rect.toPath(), getStroke(), null, null, Blend.Normal);
