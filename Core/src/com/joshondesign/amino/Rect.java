@@ -36,5 +36,13 @@ public class Rect extends Shape {
     public Rect getBounds() {
         return this;
     }
+
+    public boolean contains(Point point) {
+        if(point.getX() < x) return false;
+        if(point.getX() > x+w) return false;
+        if(point.getY() < y) return false;
+        if(point.getY() > y+h) return false;
+        return true;
+    }
 }
 

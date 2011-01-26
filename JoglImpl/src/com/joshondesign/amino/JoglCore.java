@@ -75,6 +75,11 @@ public class JoglCore extends Core {
             }
 
             public void mouseReleased(MouseEvent mouseEvent) {
+                com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
+                    new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+                    com.joshondesign.amino.event.MouseEvent.Released
+                );
+                getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Released, event);
             }
 
             public void mouseEntered(MouseEvent mouseEvent) {
@@ -85,6 +90,11 @@ public class JoglCore extends Core {
         });
         canvas.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent mouseEvent) {
+                com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
+                    new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+                    com.joshondesign.amino.event.MouseEvent.Dragged
+                );
+                getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Dragged, event);
             }
 
             public void mouseMoved(MouseEvent mouseEvent) {

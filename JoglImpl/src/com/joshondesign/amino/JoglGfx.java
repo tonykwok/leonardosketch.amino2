@@ -463,11 +463,7 @@ public class JoglGfx extends AbstractGfx {
         it = new FlatteningPathIterator(it,0.5);
         boolean closed = false;
         double[] coords = new double[6];
-        gl.glBegin(GL2.GL_LINE_LOOP);
-        //gl.glVertex2d(rect.x, rect.y);
-        //gl.glVertex2d(rect.x+rect.w,rect.y);
-        //gl.glVertex2d(rect.x+rect.w,rect.y+rect.h);
-        //gl.glVertex2d(rect.x,rect.y+rect.h);
+        gl.glBegin(GL2.GL_LINE_STRIP);
 
         while(true) {
             if(it.isDone()) break;

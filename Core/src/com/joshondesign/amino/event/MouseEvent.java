@@ -17,6 +17,8 @@ public class MouseEvent extends Event {
     public static final String Entered = new String("MOUSEEVENT_ENTERED");
     public static final String Exited = new String("MOUSEEVENT_EXITED");
     public static final String Moved = new String("MOUSEEVENT_MOVED");
+    public static final String Dragged = new String("MOUSEEVENT_DRAGGED");
+    public static final String Released = new String("MOUSEEVENT_RELEASED");
 
     public MouseEvent(Point point, String type) {
         this.point = point;

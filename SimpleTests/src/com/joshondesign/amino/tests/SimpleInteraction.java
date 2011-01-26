@@ -17,9 +17,9 @@ import java.awt.image.BufferedImage;
  * with three states: normal, hover, press,
  *
  * // - transparent hover area with some nodes in it. fades in and out
- * as you mouse in to and out of it.
+ * // as you mouse in to and out of it.
  *
- * - collapsing sidebar that pops out and slides back in when you
+ * // - collapsing sidebar that pops out and slides back in when you
  * click on it's expansion button
  *
  * a button that glows when you mouse into it and unglows when you

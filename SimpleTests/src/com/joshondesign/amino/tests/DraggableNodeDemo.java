@@ -1,9 +1,14 @@
 package com.joshondesign.amino.tests;
 
 import com.joshondesign.amino.*;
+import com.joshondesign.amino.event.Callback;
+import com.joshondesign.amino.event.MouseEvent;
 import com.joshondesign.amino.nodes.GroupNode;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple demo showing the scaling of draggable nodes
@@ -31,6 +36,40 @@ public class DraggableNodeDemo implements NodeCreator {
 
         dn1.connect(dn2);
 
+        final List<DraggableNode> nodes = new ArrayList<DraggableNode>();
+        nodes.add(dn1);
+        nodes.add(dn2);
+
+        Core.getImpl().getEventBus().listen(MouseEvent.Pressed, new Callback<MouseEvent>(){
+            public void call(MouseEvent event) {
+                //u.p("pressed");
+                for(DraggableNode n : nodes) {
+                    if(n.contains(event.getPoint())) {
+                        n.setSelected(true);
+                    }
+                }
+            }
+        });
+        Core.getImpl().getEventBus().listen(MouseEvent.Dragged, new Callback<MouseEvent>(){
+            public void call(MouseEvent event) {
+                //u.p("dragged");
+                for(DraggableNode n : nodes) {
+                    if(n.isSelected()) {
+                        n.x = event.getPoint().getX();
+                        n.y = event.getPoint().getY();
+                    }
+                }
+            }
+        });
+        Core.getImpl().getEventBus().listen(MouseEvent.Released, new Callback<MouseEvent>(){
+            public void call(MouseEvent event) {
+                //u.p("released");
+                for(DraggableNode n : nodes) {
+                    n.setSelected(false);
+                }
+            }
+        });
+
         return new GroupNode().add(dn1).add(dn2);
     }
 
@@ -38,29 +77,47 @@ public class DraggableNodeDemo implements NodeCreator {
         double x;
         double y;
         private DraggableNode target;
+        private boolean selected = false;
 
         @Override
         public void draw(Gfx gfx) {
             gfx.translate(x,y);
-            gfx.setFill(Color.rgb(0.5,0.5,0.5));
+            if(selected) {
+                gfx.setFill(Color.rgb(1.0,1.0,0.5));
+            } else {
+                gfx.setFill(Color.rgb(0.5,0.5,0.5));
+            }
             gfx.fill(Rectangle.build(0,0,50,100));
-
-            Path path = Path
-                    .moveTo(50,20)
-                    .lineTo(100,75)
-                    .build();
-            gfx.draw(path, Color.rgb(0,1,0), null, null, Blend.Normal);
-
             gfx.translate(-x,-y);
+
+            if(target != null) {
+                Path path = Path
+                        .moveTo(x+50,y+20)
+                        .curveTo(x+50+30,y+20,
+                                target.x-30, target.y+20,
+                                target.x, target.y+20)
+                        //.lineTo(target.x,target.y+20)
+                        .build();
+                gfx.draw(path, Color.rgb(0,1,0), null, null, Blend.Normal);
+            }
+
         }
 
         @Override
         public boolean contains(Point point) {
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            return Rect.build(0+(int)x,0+(int)y,50,100).contains(point);
         }
 
         public void connect(DraggableNode dn2) {
             target = dn2;
+        }
+
+        public void setSelected(boolean b) {
+            this.selected = b;
+        }
+
+        public boolean isSelected() {
+            return selected;
         }
     }
 }
