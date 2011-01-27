@@ -630,6 +630,18 @@ public class JoglGfx extends AbstractGfx {
         return bi.getRGB(px,py);
     }
 
+    public GL2 getGL() {
+        return gl;
+    }
+
+    public void switchToStandardProjection() {
+        JoglUtil.viewPerspective(gl);
+    }
+
+    public void switchToStandardOrtho() {
+        JoglUtil.viewOrtho(gl, 640, 480);
+    }
+
     private class JOGLBulkTexture extends BulkTexture {
         public BufferedImage img;
         public TextureData data;
