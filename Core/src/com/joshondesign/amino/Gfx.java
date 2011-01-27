@@ -9,4 +9,7 @@ package com.joshondesign.amino;
  */
 public interface Gfx extends MinimalGfx, FullGfx {
 
+    public BulkTexture createBulkTexture(int width, int height);
+
+    public void drawBulkTexture(BulkTexture texture);
 }

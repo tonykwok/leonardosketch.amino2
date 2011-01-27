@@ -385,6 +385,14 @@ class Java2DGfx extends AbstractGfx {
         return p;
     }
 
+    public BulkTexture createBulkTexture(int width, int height) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void drawBulkTexture(BulkTexture texture) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class J2DBuffer extends Buffer {
         private BufferedImage img;
 

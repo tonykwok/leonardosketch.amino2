@@ -1,5 +1,6 @@
 package com.joshondesign.amino.nodes;
 
+import com.joshondesign.amino.BulkTexture;
 import com.joshondesign.amino.Gfx;
 import com.joshondesign.amino.Point;
 import org.gstreamer.Bus;
@@ -24,6 +25,7 @@ public class VideoNode extends Node {
     private IntBuffer lastBuffer;
     private int w;
     private int h;
+    private BulkTexture texture;
 
     public VideoNode(File file) {
         this.file = file;
@@ -66,14 +68,16 @@ public class VideoNode extends Node {
     @Override
     public void draw(Gfx gfx) {
         if(buffer == null) return;
-
+        if(texture == null) {
+            texture = gfx.createBulkTexture(w,h);
+        }
         if(buffer != lastBuffer) {
             lastBuffer = buffer;
-            gfx.drawIntBuffer(lastBuffer,w,h);
+            texture.update(lastBuffer);
+            gfx.drawBulkTexture(texture);
         } else {
-            gfx.drawIntBuffer(lastBuffer,w,h);
+            gfx.drawBulkTexture(texture);
         }
-
     }
 
     @Override

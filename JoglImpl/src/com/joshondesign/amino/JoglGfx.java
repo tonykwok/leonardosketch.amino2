@@ -374,6 +374,8 @@ public class JoglGfx extends AbstractGfx {
 
 
 
+
+
     @Override
     public void translate(double x, double y) {
         gl.glTranslated(x,y,0);
@@ -543,6 +545,33 @@ public class JoglGfx extends AbstractGfx {
         gl.glUseProgramObjectARB(0);
 
     }
+
+    public BulkTexture createBulkTexture(int width, int height) {
+        p("created a bulk texture: " + width + " " + height);
+        JOGLBulkTexture tex = new JOGLBulkTexture(width,height);
+        return tex;
+    }
+
+    public void drawBulkTexture(BulkTexture texture) {
+        //turn on the shader
+        copyBufferShader.use(gl);
+        //rippleShader.use(gl);
+        JOGLBulkTexture bulk = (JOGLBulkTexture) texture;
+        bulk.tex.enable();
+        bulk.tex.bind();
+        //rippleShader.setIntParameter(gl, "tex0", 0);
+        copyBufferShader.setIntParameter(gl, "tex0",0);
+
+        gl.glBegin( GL_QUADS );
+            gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);
+            gl.glTexCoord2f( 0f, 1f ); gl.glVertex2f(0, bulk.tex.getImageHeight());
+            gl.glTexCoord2f( 1f, 1f ); gl.glVertex2f(bulk.tex.getImageWidth(), bulk.tex.getImageHeight());
+            gl.glTexCoord2f(1f, 0f); gl.glVertex2f(bulk.tex.getImageWidth(), 0);
+        gl.glEnd();
+        bulk.tex.disable();
+        gl.glUseProgramObjectARB(0);
+    }
+
     public void drawImage(BufferedImage buf, int x, int y) {
         Texture tex = AWTTextureIO.newTexture(buf, false);
         tex.enable();
@@ -599,5 +628,31 @@ public class JoglGfx extends AbstractGfx {
             e.printStackTrace();
         }
         return bi.getRGB(px,py);
+    }
+
+    private class JOGLBulkTexture extends BulkTexture {
+        public BufferedImage img;
+        public TextureData data;
+        public Texture tex;
+
+        private JOGLBulkTexture(int width, int height) {
+            img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            data = AWTTextureIO.newTextureData(img, false);
+            tex = new Texture(data);
+        }
+
+        @Override
+        public void update(IntBuffer intBuffer) {
+            //get an int array for the buffered image
+            DataBufferInt db = (DataBufferInt) img.getRaster().getDataBuffer();
+            int[] data = db.getData();
+
+            //copy the pixel data into the buffered image's data.
+            intBuffer.get(data);
+            //rewind the intbuffer so it can be used again
+            intBuffer.rewind();
+            //update the moview
+            tex.updateImage(this.data);
+        }
     }
 }

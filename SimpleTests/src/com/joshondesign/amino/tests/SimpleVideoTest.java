@@ -37,8 +37,6 @@ public class SimpleVideoTest implements NodeCreator {
     }
 
     public Node create() throws NoSuchMethodException {
-
-        //buf = new BufferedImage(200,200,BufferedImage.TYPE_INT_ARGB);
         Gst.setUseDefaultContext(true);
         String[] args = new String[0];
         Gst.init("GSVideo", args);
@@ -58,6 +56,7 @@ public class SimpleVideoTest implements NodeCreator {
                 invokeEvent(w, h, buffer);
               }
             });
+
         // Setting direct buffer passing in the video sink, so no new buffers are created
         // and disposed by the GC on each frame (thanks to Octavi Estapé for pointing
         // out this one).
