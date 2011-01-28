@@ -54,8 +54,12 @@ public class MovieUI implements NodeCreator {
                 gl.glScaled(s,s,s);
                 //glut.glutSolidRhombicDodecahedron();
                 angle += 0.5;
-                gl.glRotated(angle,0,1,0);
-                glut.glutWireTeapot(1);
+                gl.glRotated(angle,0.5,1,0);
+                //glut.glutWireTeapot(1);
+                //glut.glutWireDodecahedron();
+                //glut.glutWireIcosahedron();
+                //glut.glutWireOctahedron();
+                glut.glutWireTorus(0.5, 1.0, 15, 20);
                 //glut.glutSolidTeapot(1);
               /*
                 //for debugging

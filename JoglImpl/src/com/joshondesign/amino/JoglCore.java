@@ -56,7 +56,7 @@ public class JoglCore extends Core {
         frame = new Frame("Amino 2 with JOGL Core");
         frame.setSize(640,480);
         frame.add(canvas);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() {
