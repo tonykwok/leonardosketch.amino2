@@ -1,6 +1,9 @@
 package com.joshondesign.amino.draw;
 
 import com.joshondesign.amino.JoglEventListener;
+import com.joshondesign.amino.draw.effects.DropshadowEffect;
+import com.joshondesign.amino.draw.effects.Effect;
+import com.joshondesign.amino.draw.effects.RippleEffect;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.awt.AWTTextureIO;

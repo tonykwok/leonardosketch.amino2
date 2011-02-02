@@ -1,4 +1,4 @@
-package com.joshondesign.amino.draw;
+package com.joshondesign.amino.draw.effects;
 
 /**
  * Created by IntelliJ IDEA.

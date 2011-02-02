@@ -2,6 +2,7 @@ package com.joshondesign.amino.tests;
 
 import com.joshondesign.amino.*;
 import com.joshondesign.amino.draw.*;
+import com.joshondesign.amino.draw.effects.DropshadowEffect;
 import com.joshondesign.amino.event.MouseEvent;
 import com.joshondesign.amino.nodes.*;
 

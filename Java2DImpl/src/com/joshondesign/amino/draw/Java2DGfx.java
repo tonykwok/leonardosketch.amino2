@@ -1,5 +1,8 @@
 package com.joshondesign.amino.draw;
 
+import com.joshondesign.amino.draw.effects.DropshadowEffect;
+import com.joshondesign.amino.draw.effects.Effect;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -1,5 +1,7 @@
 package com.joshondesign.amino.draw;
 
+import com.joshondesign.amino.draw.effects.Effect;
+
 import java.nio.IntBuffer;
 
 /*

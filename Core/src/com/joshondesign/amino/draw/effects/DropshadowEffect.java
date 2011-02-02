@@ -1,4 +1,6 @@
-package com.joshondesign.amino.draw;
+package com.joshondesign.amino.draw.effects;
+
+import com.joshondesign.amino.draw.Color;
 
 /**
  * Created by IntelliJ IDEA.

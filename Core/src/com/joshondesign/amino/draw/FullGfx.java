@@ -1,5 +1,7 @@
 package com.joshondesign.amino.draw;
 
+import com.joshondesign.amino.draw.effects.Effect;
+
 /**
  * FullGFX adds additional functionality to the minimum required to draw.
  * App developers will use this API.  GFX implementers can directly implement
