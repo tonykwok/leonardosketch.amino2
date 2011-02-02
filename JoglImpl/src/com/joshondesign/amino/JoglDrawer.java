@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.draw.JoglGfx;
 import com.joshondesign.amino.nodes.GroupNode;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.ShapeNode;

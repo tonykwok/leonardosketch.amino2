@@ -1,5 +1,8 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.draw.Color;
+import com.joshondesign.amino.draw.Fill;
+
 /**
  * Created by IntelliJ IDEA.
  * User: joshmarinacci

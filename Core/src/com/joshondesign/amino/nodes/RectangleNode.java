@@ -1,6 +1,6 @@
 package com.joshondesign.amino.nodes;
 
-import com.joshondesign.amino.*;
+import com.joshondesign.amino.draw.*;
 
 /**
  * Created by IntelliJ IDEA.

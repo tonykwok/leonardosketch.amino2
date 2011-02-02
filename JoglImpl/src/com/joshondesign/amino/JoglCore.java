@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.anim.Animateable;
 import com.joshondesign.amino.event.EventBus;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
@@ -76,7 +77,7 @@ public class JoglCore extends Core {
 
             public void mouseReleased(MouseEvent mouseEvent) {
                 com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
-                    new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+                    new com.joshondesign.amino.draw.Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
                     com.joshondesign.amino.event.MouseEvent.Released
                 );
                 getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Released, event);
@@ -91,7 +92,7 @@ public class JoglCore extends Core {
         canvas.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent mouseEvent) {
                 com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
-                    new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+                    new com.joshondesign.amino.draw.Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
                     com.joshondesign.amino.event.MouseEvent.Dragged
                 );
                 getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Dragged, event);
@@ -99,7 +100,7 @@ public class JoglCore extends Core {
 
             public void mouseMoved(MouseEvent mouseEvent) {
                 com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
-                    new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+                    new com.joshondesign.amino.draw.Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
                     com.joshondesign.amino.event.MouseEvent.Moved
                 );
                 getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Moved, event);
@@ -122,7 +123,7 @@ public class JoglCore extends Core {
 
     private void publish(MouseEvent mouseEvent) {
         com.joshondesign.amino.event.MouseEvent event = new com.joshondesign.amino.event.MouseEvent(
-            new Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
+            new com.joshondesign.amino.draw.Point(mouseEvent.getPoint().getX(),mouseEvent.getPoint().getY()),
             com.joshondesign.amino.event.MouseEvent.Pressed
         );
         getEventBus().publish(com.joshondesign.amino.event.MouseEvent.Pressed, event);

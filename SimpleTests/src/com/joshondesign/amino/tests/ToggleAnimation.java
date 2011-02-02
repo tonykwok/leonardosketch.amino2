@@ -1,6 +1,6 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.Anim;
+import com.joshondesign.amino.anim.Anim;
 import com.joshondesign.amino.Core;
 import com.joshondesign.amino.event.Callback;
 import com.joshondesign.amino.event.MouseEvent;

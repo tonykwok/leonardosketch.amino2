@@ -1,5 +1,6 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.draw.*;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;
@@ -98,12 +99,12 @@ public class BasicDrawingTests {
         //fill rect
         gfx.fillRect(Rect.build(0,0,100,50),Color.rgb(0,1,0),null,null, Blend.Normal);
         gfx.fill(Ellipse.build(0,100,100,50).toPath(),Color.rgb(0,0,1),null,null,Blend.Normal);
-        gfx.fill(Rectangle.build(0,200,100,50).toPath(),Color.rgb(1,0,0),null,(Path)null,Blend.Normal);
+        gfx.fill(Rectangle.build(0, 200, 100, 50).toPath(),Color.rgb(1,0,0),null,(Path)null,Blend.Normal);
         gfx.setFill(Color.rgb(0,1,0));
         gfx.fill(Ellipse.build(0,300,100,50));
 
         //draw rect
-        gfx.drawRect(Rect.build(200,0,100,50),Color.rgb(0,1,0),null,null, Blend.Normal);
+        gfx.drawRect(Rect.build(200, 0, 100, 50),Color.rgb(0,1,0),null,null, Blend.Normal);
         //draw rectangle with null rect clip
         gfx.draw(Rectangle.build(200,100,80,20).toPath(),Color.rgb(1,0,1),null,null, Blend.Normal);
         //draw rectangle with null path clip
@@ -112,7 +113,7 @@ public class BasicDrawingTests {
         //draw rect with add blend mode
         gfx.setFill(Color.rgb(0,1,0));
         gfx.fill(Rectangle.build(220,300,20,80).toPath(), Color.rgb(0.5,0,0.5),null,(Path)null,Blend.Add);
-        gfx.fill(Rectangle.build(200,320,80,20).toPath(), Color.rgb(0.5,0,0.5),null,(Path)null,Blend.Add);
+        gfx.fill(Rectangle.build(200,320,80,20).toPath(), Color.rgb(0.5, 0, 0.5),null,(Path)null,Blend.Add);
 
         //rect clip
         //gfx.setFill(Color.rgb(0,0,1));

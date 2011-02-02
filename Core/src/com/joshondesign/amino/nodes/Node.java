@@ -1,7 +1,7 @@
 package com.joshondesign.amino.nodes;
 
-import com.joshondesign.amino.Gfx;
-import com.joshondesign.amino.Point;
+import com.joshondesign.amino.draw.Gfx;
+import com.joshondesign.amino.draw.Point;
 
 /**
  * Created by IntelliJ IDEA.

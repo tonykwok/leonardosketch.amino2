@@ -1,6 +1,6 @@
 package com.joshondesign.amino.event;
 
-import com.joshondesign.amino.Point;
+import com.joshondesign.amino.draw.Point;
 
 /**
  * Created by IntelliJ IDEA.

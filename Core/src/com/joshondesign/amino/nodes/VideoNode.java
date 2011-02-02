@@ -1,8 +1,8 @@
 package com.joshondesign.amino.nodes;
 
-import com.joshondesign.amino.BulkTexture;
-import com.joshondesign.amino.Gfx;
-import com.joshondesign.amino.Point;
+import com.joshondesign.amino.draw.BulkTexture;
+import com.joshondesign.amino.draw.Gfx;
+import com.joshondesign.amino.draw.Point;
 import org.gstreamer.Bus;
 import org.gstreamer.Gst;
 import org.gstreamer.GstObject;

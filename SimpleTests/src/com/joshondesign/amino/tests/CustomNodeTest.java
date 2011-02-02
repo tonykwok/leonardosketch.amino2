@@ -1,6 +1,7 @@
 package com.joshondesign.amino.tests;
 
 import com.joshondesign.amino.*;
+import com.joshondesign.amino.draw.*;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;
@@ -139,7 +140,7 @@ public class CustomNodeTest implements NodeCreator {
                 }
 
                 //draw a rect clipped by the ellipse below it, then blit to the screen
-                gfx.fill(Ellipse.build(60,20,200,100).toPath(), Color.rgba(1,1,1,1), buffer3, null, Blend.Normal);
+                gfx.fill(Ellipse.build(60, 20, 200, 100).toPath(), Color.rgba(1,1,1,1), buffer3, null, Blend.Normal);
                 gfx.fill(Rect.build(0,0,200,200).toPath(), Color.rgba(0,1,0,1), buffer3, null, Blend.SrcIn);
                 gfx.copyBuffer(
                         Rect.build(0, 0, 300, 300), buffer3,

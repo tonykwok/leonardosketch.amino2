@@ -1,6 +1,8 @@
 package com.joshondesign.amino.tests;
 
 import com.joshondesign.amino.*;
+import com.joshondesign.amino.anim.Animateable;
+import com.joshondesign.amino.draw.*;
 import com.joshondesign.amino.nodes.GroupNode;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
@@ -95,7 +97,7 @@ public class ParticlesDemo implements NodeCreator {
         Particle() {
             x = 0;
             y = 0;
-            path = Path.moveTo(x,y)
+            path = Path.moveTo(x, y)
                     .lineTo(x+30,y)
                     .lineTo(x+40,y+20)
                     .lineTo(x+10,y+30)

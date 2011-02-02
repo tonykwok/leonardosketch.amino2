@@ -1,8 +1,8 @@
 package com.joshondesign.amino.nodes;
 
-import com.joshondesign.amino.Ellipse;
-import com.joshondesign.amino.Gfx;
-import com.joshondesign.amino.Point;
+import com.joshondesign.amino.draw.Ellipse;
+import com.joshondesign.amino.draw.Gfx;
+import com.joshondesign.amino.draw.Point;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,7 +40,7 @@ public class OvalNode extends ShapeNode {
     @Override
     public void draw(Gfx gfx) {
         gfx.setFill(getFill());
-        gfx.fill(Ellipse.build(x,y,width,height));
+        gfx.fill(Ellipse.build(x, y, width, height));
     }
 
     @Override

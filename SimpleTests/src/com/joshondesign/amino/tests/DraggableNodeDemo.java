@@ -1,6 +1,7 @@
 package com.joshondesign.amino.tests;
 
 import com.joshondesign.amino.*;
+import com.joshondesign.amino.draw.*;
 import com.joshondesign.amino.event.Callback;
 import com.joshondesign.amino.event.MouseEvent;
 import com.joshondesign.amino.nodes.GroupNode;
@@ -85,7 +86,7 @@ public class DraggableNodeDemo implements NodeCreator {
             if(selected) {
                 gfx.setFill(Color.rgb(1.0,1.0,0.5));
             } else {
-                gfx.setFill(Color.rgb(0.5,0.5,0.5));
+                gfx.setFill(Color.rgb(0.5, 0.5, 0.5));
             }
             gfx.fill(Rectangle.build(0,0,50,100));
             gfx.translate(-x,-y);
@@ -105,7 +106,7 @@ public class DraggableNodeDemo implements NodeCreator {
 
         @Override
         public boolean contains(Point point) {
-            return Rect.build(0+(int)x,0+(int)y,50,100).contains(point);
+            return Rect.build(0 + (int) x, 0 + (int) y, 50, 100).contains(point);
         }
 
         public void connect(DraggableNode dn2) {

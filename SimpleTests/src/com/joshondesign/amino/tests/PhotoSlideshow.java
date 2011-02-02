@@ -1,7 +1,7 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.Anim;
-import com.joshondesign.amino.Blend;
+import com.joshondesign.amino.anim.Anim;
+import com.joshondesign.amino.draw.Blend;
 import com.joshondesign.amino.Core;
 import com.joshondesign.amino.nodes.BlendNode;
 import com.joshondesign.amino.nodes.ImageNode;

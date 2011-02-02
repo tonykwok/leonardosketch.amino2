@@ -1,5 +1,9 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.anim.Animateable;
+import com.joshondesign.amino.draw.JoglGfx;
+import com.joshondesign.amino.draw.JoglUtil;
+
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -20,8 +24,8 @@ import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
  * To change this template use File | Settings | File Templates.
  */
 public class JoglEventListener implements GLEventListener {
-    int width;
-    int height;
+    public int width;
+    public int height;
     private JoglGfx gfx;
     private JoglCore core;
     private JoglDrawer drawer;

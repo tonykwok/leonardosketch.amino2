@@ -1,7 +1,7 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.Anim;
-import com.joshondesign.amino.Color;
+import com.joshondesign.amino.anim.Anim;
+import com.joshondesign.amino.draw.Color;
 import com.joshondesign.amino.Core;
 import com.joshondesign.amino.nodes.GroupNode;
 import com.joshondesign.amino.nodes.Node;

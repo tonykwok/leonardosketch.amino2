@@ -1,5 +1,7 @@
 package com.joshondesign.amino;
 
+import com.joshondesign.amino.anim.Animateable;
+import com.joshondesign.amino.draw.Java2DGfx;
 import com.joshondesign.amino.event.EventBus;
 import com.joshondesign.amino.nodes.*;
 

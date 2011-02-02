@@ -1,9 +1,9 @@
 package com.joshondesign.amino.tests;
 
 import com.joshondesign.amino.Core;
-import com.joshondesign.amino.Gfx;
-import com.joshondesign.amino.JoglGfx;
-import com.joshondesign.amino.Point;
+import com.joshondesign.amino.draw.Gfx;
+import com.joshondesign.amino.draw.JoglGfx;
+import com.joshondesign.amino.draw.Point;
 import com.joshondesign.amino.nodes.Node;
 import com.joshondesign.amino.nodes.NodeCreator;
 import com.joshondesign.amino.nodes.ShapeNode;

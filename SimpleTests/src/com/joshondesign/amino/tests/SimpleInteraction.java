@@ -1,8 +1,7 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.Color;
 import com.joshondesign.amino.*;
-import com.joshondesign.amino.Point;
+import com.joshondesign.amino.draw.*;
 import com.joshondesign.amino.event.MouseEvent;
 import com.joshondesign.amino.nodes.*;
 
@@ -58,7 +57,7 @@ public class SimpleInteraction implements NodeCreator {
         RectangleNode sidebar = new RectangleNode()
                 .setX(0).setY(40).setWidth(100).setHeight(300)
                 .setCorner(20);
-        sidebar.setFill(Color.rgba(0.8, 0.8, 0.8, 0.8));
+        sidebar.setFill(com.joshondesign.amino.draw.Color.rgba(0.8, 0.8, 0.8, 0.8));
         //sidebar.setStroke(Color.rgb(1,1,1));
         sidebar.setStrokeWidth(10);
 
@@ -73,14 +72,14 @@ public class SimpleInteraction implements NodeCreator {
                 .setY(10)
                 .setWidth(300)
                 .setHeight(50);
-        fadebar.setFill(Color.rgb(0,0,1));
+        fadebar.setFill(com.joshondesign.amino.draw.Color.rgb(0, 0, 1));
         fadebar.setOpacity(0.5);
         Core.getImpl().add(new ToggleAnimation(fadebar,"opacity",0.3,0.95,0.2, MouseEvent.Moved));
 
 
         RectangleNode glowRect = new RectangleNode().setX(200).setY(200).setWidth(50).setHeight(50);
-        glowRect.setFill(Color.rgb(0, 1, 1));
-        DropshadowEffect glow = DropshadowEffect.build(0, 0, 10, Color.rgb(1, 1, 0));
+        glowRect.setFill(com.joshondesign.amino.draw.Color.rgb(0, 1, 1));
+        DropshadowEffect glow = DropshadowEffect.build(0, 0, 10, com.joshondesign.amino.draw.Color.rgb(1, 1, 0));
         EffectBuffer buff = new EffectBuffer(glowRect,glow);
 
         //tell her we'll call her on sunday when we get home.
@@ -118,7 +117,7 @@ public class SimpleInteraction implements NodeCreator {
         }
 
         @Override
-        public boolean contains(Point point) {
+        public boolean contains(com.joshondesign.amino.draw.Point point) {
             return false;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }

@@ -1,8 +1,8 @@
 package com.joshondesign.amino.tests;
 
-import com.joshondesign.amino.Anim;
+import com.joshondesign.amino.anim.Anim;
 import com.joshondesign.amino.Core;
-import com.joshondesign.amino.Path;
+import com.joshondesign.amino.draw.Path;
 import com.joshondesign.amino.Util;
 import com.joshondesign.amino.nodes.*;
 
