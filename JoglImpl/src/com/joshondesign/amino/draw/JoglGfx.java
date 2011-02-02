@@ -48,10 +48,11 @@ public class JoglGfx extends AbstractGfx {
     private Buffer defaultBuffer;
     private JoglEventListener master;
     private ShadowBlurShader shadowBlurShader;
-    private Shader rippleShader;
+    private RippleShader rippleShader;
     private Texture movieTex;
     private BufferedImage movieBI;
     private TextureData movieTexData;
+    private Shader ripple2;
 
     public JoglGfx(JoglEventListener master, GL2 gl) {
         this.master = master;
@@ -61,14 +62,11 @@ public class JoglGfx extends AbstractGfx {
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
                 JoglGfx.class.getResource("shaders/CopyBuffer.frag")
         );
-        /*shadowBlurShader = Shader.load(gl,
+        ripple2 = Shader.load(gl,
                 JoglGfx.class.getResource("shaders/PassThrough.vert"),
-                JoglGfx.class.getResource("shaders/ShadowBlur.frag")
-        );*/
-        rippleShader = Shader.load(gl,
-                JoglGfx.class.getResource("shaders/PassThrough.vert"),
-                JoglGfx.class.getResource("shaders/Ripple.frag"));
-
+                JoglGfx.class.getResource("shaders/Ripple.frag")
+        );
+        rippleShader = new RippleShader(gl);
         linearGradientShader = new LinearGradientShader(gl);
         radialGradientShader = new RadialGradientShader(gl);
         textureShader = new TextureShader(gl);
@@ -558,13 +556,29 @@ public class JoglGfx extends AbstractGfx {
 
     public void drawBulkTexture(BulkTexture texture) {
         //turn on the shader
-        copyBufferShader.use(gl);
-        //rippleShader.use(gl);
+        //p("effect = " + stack.peek().effect);
+
         JOGLBulkTexture bulk = (JOGLBulkTexture) texture;
         bulk.tex.enable();
         bulk.tex.bind();
+
+        //Shader shader = null;//copyBufferShader;
+        if(stack.peek().effect instanceof RippleEffect) {
+            rippleShader.setEffect((RippleEffect) stack.peek().effect);
+            rippleShader.use(gl);
+            //shader = rippleShader;
+            //p("using ripple");
+        } else {
+            //shader = copyBufferShader;
+            //shader.use(gl);
+            copyBufferShader.use(gl);
+        }
+        //rippleShader.use(gl);
         //rippleShader.setIntParameter(gl, "tex0", 0);
-        copyBufferShader.setIntParameter(gl, "tex0",0);
+
+
+        //rippleShader.setEffect((RippleEffect) stack.peek().effect);
+        //rippleShader.use(gl);
 
         gl.glBegin( GL_QUADS );
             gl.glTexCoord2f(0f, 0f); gl.glVertex2f(0, 0);
@@ -625,11 +639,13 @@ public class JoglGfx extends AbstractGfx {
             }
         }
 
-        try {
-            ImageIO.write(bi, "png", new FileOutputStream("testblah" + count + ".png"));
-            count++;
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(false) {
+            try {
+                ImageIO.write(bi, "png", new FileOutputStream("testblah" + count + ".png"));
+                count++;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return bi.getRGB(px,py);
     }
@@ -661,10 +677,10 @@ public class JoglGfx extends AbstractGfx {
         public void update(IntBuffer intBuffer) {
             //get an int array for the buffered image
             DataBufferInt db = (DataBufferInt) img.getRaster().getDataBuffer();
-            int[] data = db.getData();
+            int[] intData = db.getData();
 
             //copy the pixel data into the buffered image's data.
-            intBuffer.get(data);
+            intBuffer.get(intData);
             //rewind the intbuffer so it can be used again
             intBuffer.rewind();
             //update the moview

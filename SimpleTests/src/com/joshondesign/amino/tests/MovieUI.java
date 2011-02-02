@@ -38,29 +38,23 @@ public class MovieUI implements NodeCreator {
                 JoglGfx g = (JoglGfx) gfx;
                 GL2 gl = g.getGL();
                 gl.glPushMatrix();
-                //gl.glTranslated(200,200,0);
 
                 g.switchToStandardProjection();
                 gl.glMatrixMode(GL_MODELVIEW);
-                //gl.glPushMatrix();
                 gl.glLoadIdentity();
                 gl.glMatrixMode(GL_PROJECTION);
                 gl.glPushMatrix();
                 gl.glLoadIdentity();
 
-                //gl.glTranslated(200,200,0);
+
                 gl.glColor3d(1.0,0,1.0);
                 double s = 1.0/3.0;
                 gl.glScaled(s,s,s);
-                //glut.glutSolidRhombicDodecahedron();
+
                 angle += 0.5;
                 gl.glRotated(angle,0.5,1,0);
-                //glut.glutWireTeapot(1);
-                //glut.glutWireDodecahedron();
-                //glut.glutWireIcosahedron();
-                //glut.glutWireOctahedron();
+
                 glut.glutWireTorus(0.5, 1.0, 15, 20);
-                //glut.glutSolidTeapot(1);
               /*
                 //for debugging
                 gl.glColor3d(1.0,0,0);
@@ -73,11 +67,6 @@ public class MovieUI implements NodeCreator {
                 */
                 gl.glPopMatrix();
                 g.switchToStandardOrtho();
-
-                //gl.glScaled(10,10,10);
-                //glut.glutSolidRhombicDodecahedron();
-                //gl.glScaled(1/10,1/10,1/10);
-                //glut.glutWireDodecahedron();
                 gl.glPopMatrix();
             }
 

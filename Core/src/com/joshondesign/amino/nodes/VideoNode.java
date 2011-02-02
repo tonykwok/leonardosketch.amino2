@@ -70,14 +70,13 @@ public class VideoNode extends Node {
         if(buffer == null) return;
         if(texture == null) {
             texture = gfx.createBulkTexture(w,h);
+            //p("creating texture");
         }
         if(buffer != lastBuffer) {
             lastBuffer = buffer;
-            texture.update(lastBuffer);
-            gfx.drawBulkTexture(texture);
-        } else {
-            gfx.drawBulkTexture(texture);
+            texture.update(buffer);
         }
+        gfx.drawBulkTexture(texture);
     }
 
     @Override

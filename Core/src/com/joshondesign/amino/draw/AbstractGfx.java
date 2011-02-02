@@ -6,7 +6,7 @@ import java.util.ArrayDeque;
 
 
 public abstract class AbstractGfx implements Gfx {
-    private ArrayDeque<Context> stack;
+    protected ArrayDeque<Context> stack;
 
 
     public AbstractGfx() {
@@ -22,7 +22,7 @@ public abstract class AbstractGfx implements Gfx {
     }
 
 
-    private static class Context {
+    public static class Context {
         public Fill fill;
         public Blend blend;
         public Effect effect;
