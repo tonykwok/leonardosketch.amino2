@@ -10,8 +10,8 @@ import com.joshondesign.amino.draw.Color;
  * To change this template use File | Settings | File Templates.
  */
 public class DropshadowEffect implements Effect {
-    double x;
-    double y;
+    public double x;
+    public double y;
     private double radius;
     private Color color;
 
