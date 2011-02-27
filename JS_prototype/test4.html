@@ -1,0 +1,107 @@
+<html>
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <script src="amino.js"></script>
+<script language="JavaScript">
+</script>
+
+<body>
+<canvas id="can" width="800" height="600"></canvas>
+
+<script language="JavaScript">
+    var runner = new Runner();
+    runner.setCanvas(document.getElementById("can"));
+    
+    function Cell(x,y,radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        var self = this;
+        this.drawLower = function(ctx) {
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(self.x, self.y, self.radius, 0, Math.PI*2, true); 
+            ctx.closePath();
+            ctx.fill();
+        };
+        this.drawUpper = function(ctx) {
+            ctx.fillStyle = "gray";
+            ctx.beginPath();
+            ctx.arc(self.x, self.y, self.radius-10, 0, Math.PI*2, true); 
+            ctx.closePath();
+            ctx.fill();
+        };
+    }
+    
+    function CellGroup() {
+        this.children = [];
+        var self = this;
+        this.add = function(n) {
+            self.children[self.children.length] = n;
+            return self;
+        };
+        this.draw = function(ctx) {
+            indent();
+            for(var i=0; i<self.children.length;i++) {
+                self.children[i].drawLower(ctx);
+            }
+            for(var i=0; i<self.children.length;i++) {
+                self.children[i].drawUpper(ctx);
+            }
+            outdent();
+        };
+        return true;
+    };
+    
+    var cg = new CellGroup();
+    var cell1 = new Cell(100,100,100);
+    var cell2 = new Cell(180,100,80);
+    cg.add(cell1);
+    cg.add(cell2);
+    runner.addAnim(new Anim(cell1,"x",0,300,5.0).setAutoReverse(true).setLoop(true));
+    runner.addAnim(new Anim(cell2,"y",0,200,1.0).setAutoReverse(true).setLoop(true));
+    
+    
+    function Ameoba() {
+        this.x = 100;
+        this.y = 400;
+        this.ciliaAngle = 0;
+        this.draw = function(ctx) {
+            ctx.strokeStyle = "white";
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true); 
+            ctx.closePath();
+            ctx.stroke();
+            ctx.save();
+            
+            ctx.translate(this.x,this.y);
+            for(var i=0; i<12; i++) {
+                ctx.rotate(30*Math.PI/180,0,0);
+                ctx.translate(20,0);
+                ctx.rotate(this.ciliaAngle*Math.PI/180,0,0);
+                ctx.beginPath();
+                ctx.moveTo(0,0);
+                ctx.lineTo(10,0);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.rotate(-this.ciliaAngle*Math.PI/180,0,0);
+                ctx.translate(-20,0);
+            }
+            
+            ctx.restore();
+        }
+    };
+    var ameoba = new Ameoba();
+    
+    var g = new Group();
+    g.add(cg);
+    g.add(ameoba);
+    runner.addAnim(new Anim(ameoba,"ciliaAngle",-45,45,1.0).setAutoReverse(true).setLoop(true));
+    g.add(new Text().setText("Osmosis").setX(200).setY(400).setFill("white"));
+    runner.root = g;
+    runner.background = "black";
+    runner.fps = 60;
+    runner.start();
+</script>
+
+</body>
+</html>

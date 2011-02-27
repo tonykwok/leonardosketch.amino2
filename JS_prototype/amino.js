@@ -1,3 +1,20 @@
+var DEBUG = false;
+var tabcount = 0;
+function indent() {
+    tabcount++;
+}
+function outdent() {
+    tabcount--;
+}
+function p(s) {
+    if(DEBUG) {
+        var tab = "";
+        for(i=0;i<tabcount;i++) {
+            tab = tab + "  ";
+        }
+        console.log(tab+s);
+    }
+}
 function Transform(n) {
     this.node = n;
     this.rotation = 0;
@@ -17,24 +34,28 @@ function Transform(n) {
         ctx.rotate(this.rotation*Math.PI/180,0,0);
         this.node.draw(ctx);
         ctx.restore();
-        //ctx.rotate(-this.rotation*Math.PI/180,0,0);
-        //ctx.translate(-this.tx,-this.ty);
     };
     return true;
 }
 
 function Group() {
-    var self = this;
     this.children = [];
+    var self = this;
     this.add = function(n) {
-        this.children[this.children.length] = n;
-        return this;
-    }
+        self.children[self.children.length] = n;
+        p("adding child " + self.children.length);
+        return self;
+    };
     this.draw = function(ctx) {
-        for(i=0; i<this.children.length;i++) {
-            this.children[i].draw(ctx);
+        p("group: child count = " + self.children.length);
+        indent();
+        for(var i=0; i<self.children.length;i++) {
+            p("c = " + self.children[i]);
+            self.children[i].draw(ctx);
         }
-    }
+        outdent();
+    };
+    return true;
 };
 
 function Text() {
@@ -71,14 +92,22 @@ function Circle() {
     this.y = 0.0;
     this.radius = 10.0;
     this.fill = "black";
+    var self = this;
+    this.set = function(x,y,radius) {
+        self.x = x;
+        self.y = y;
+        self.radius = radius;
+        return self;
+    };
     this.setFill = function(fill) {
-        this.fill = fill;
-        return this;
-    }
+        self.fill = fill;
+        return self;
+    };
     this.draw = function(ctx) {
-        ctx.fillStyle = this.fill;
+        p("circle: " + self.x + " " + self.y);
+        ctx.fillStyle = self.fill;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true); 
+        ctx.arc(self.x, self.y, self.radius, 0, Math.PI*2, true); 
         ctx.closePath();
         ctx.fill();
     };
@@ -128,6 +157,7 @@ function Rect() {
 
 function Runner() {
     this.root = "";
+    this.background = "gray";
     this.anims = [];
     this.callbacks = [];
     this.tickIndex = 0;
@@ -135,6 +165,7 @@ function Runner() {
     this.tickSamples = 100;
     this.tickList = [];
     this.lastTick = 0;
+    this.fps = 60;
     
     var self = this;
     
@@ -143,6 +174,7 @@ function Runner() {
     };
     
     this.update = function() {
+        p("--");
         var time = new Date().getTime();
         for(i=0;i<self.anims.length; i++) {
             var a = self.anims[i];
@@ -158,15 +190,19 @@ function Runner() {
         
         var ctx = self.canvas.getContext("2d");
         //fill the background
-        ctx.fillStyle = "#bbbbbb";
-        ctx.fillRect(0,0,500,500);
+        ctx.fillStyle = self.background;
+        ctx.fillRect(0,0,self.canvas.width,self.canvas.height);
         
         //draw the scene
         self.root.draw(ctx);
         
+        ctx.save();
+        ctx.translate(0,self.canvas.height-40);
+        ctx.fillStyle = "gray";
+        ctx.fillRect(0,-10,200,50);
         //draw a debugging overlay
         ctx.fillStyle = "black";
-        ctx.fillText("timestamp " + new Date().getTime(),10,470);
+        ctx.fillText("timestamp " + new Date().getTime(),10,0);
         
         //calc fps
         var delta = time-self.lastTick;
@@ -182,16 +218,15 @@ function Runner() {
             self.tickIndex = 0;
         }
         var fpsAverage = self.tickSum/self.tickSamples;
-        ctx.fillText("last msec/frame " + delta,10,480);
-        ctx.fillText("avg msec/frame  " + fpsAverage,10,490);
-        ctx.fillText("avg fps = " + (1.0/fpsAverage)*1000,10,500);
-        //1/(x msec/frame ) = frames/msec
+        ctx.fillText("last msec/frame " + delta,10,10);
+        ctx.fillText("avg msec/frame  " + fpsAverage,10,20);
+        ctx.fillText("avg fps = " + (1.0/fpsAverage)*1000,10,30);
+        ctx.restore();
     };
     
     this.start = function() {
-        var fps = 60;
         self.lastTick = new Date().getTime();
-        setInterval(this.update,1000/fps);
+        setInterval(this.update,1000/self.fps);
     };
     
     this.addAnim = function(anim) {
