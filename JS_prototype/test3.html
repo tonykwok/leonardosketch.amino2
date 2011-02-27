@@ -1,0 +1,52 @@
+<html>
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <script src="amino.js"></script>
+    <script language="JavaScript">
+</script>
+
+<body>
+<canvas id="can" width="500" height="500"></canvas>
+
+<script language="JavaScript">
+    var runner = new Runner();
+    runner.setCanvas(document.getElementById("can"));
+    
+    var g = new Group();
+    /*
+    for(i=0; i<5; i++) {
+        var v = Math.random()*200+50;
+        var r = new Rect().set(50+i*80,400-v,60,v).setFill("green");
+        g.add(r);
+        runner.addAnim(new Anim(r,"y",400-0,400-v,0.5));
+        runner.addAnim(new Anim(r,"height",0,v,0.5));
+        g.add(new Text().setText("Day " + i).setX(70+i*80).setY(440).setFill("black"));
+    }
+    
+    g.add(new Rect().set(30,30,3,390).setFill("black"));
+    g.add(new Rect().set(30,420,420,3).setFill("black"));
+    */
+     
+    var MAX_WIDTH = 500;
+    var MAX_HEIGHT = 500;
+    var MAX_PARTICLES = 100;
+    runner.addCallback(function() {
+        if(g.children.length < MAX_PARTICLES) {
+            var r = new Circle().setFill("white");
+            r.vx = (0.5+Math.random())/2.0;
+            r.vy = (0.5+Math.random())/2.0;
+            g.add(r);
+        }
+        for(i=0;i<g.children.length;i++) {
+            var r = g.children[i];
+            r.x += r.vx;
+            r.y += r.vy;
+            if(r.x > MAX_WIDTH) r.x = 0;
+            if(r.y > MAX_HEIGHT) r.y = 0;
+        }
+    });
+    runner.root = g;
+    runner.start();
+</script>
+
+</body>
+</html>
