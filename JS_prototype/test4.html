@@ -57,15 +57,26 @@
     var cell2 = new Cell(180,100,80);
     cg.add(cell1);
     cg.add(cell2);
-    runner.addAnim(new Anim(cell1,"x",0,300,5.0).setAutoReverse(true).setLoop(true));
-    runner.addAnim(new Anim(cell2,"y",0,200,1.0).setAutoReverse(true).setLoop(true));
+    runner.addAnim(new Anim(cell1,"x",0,300,10.0).setAutoReverse(true).setLoop(true));
+    runner.addAnim(new Anim(cell2,"y",0,200,3.0).setAutoReverse(true).setLoop(true));
     
     
     function Ameoba() {
         this.x = 100;
         this.y = 400;
+        this.targetX = this.x;
+        this.targetY = this.y;
         this.ciliaAngle = 0;
+        this.moving = false;
+        
         this.draw = function(ctx) {
+            if(this.moving) {
+                if(this.targetX < this.x-2) this.x--;
+                if(this.targetX > this.x+2) this.x++;
+                if(this.targetY < this.y-2) this.y--;
+                if(this.targetY > this.y+2) this.y++;
+            }
+            
             ctx.strokeStyle = "white";
             ctx.beginPath();
             ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true); 
@@ -89,6 +100,11 @@
             
             ctx.restore();
         }
+        this.moveTo = function(x,y) {
+            this.moving = true;
+            this.targetX = x;
+            this.targetY = y;
+        };
     };
     var ameoba = new Ameoba();
     
@@ -100,6 +116,11 @@
     runner.root = g;
     runner.background = "black";
     runner.fps = 60;
+    
+    runner.listen("MOUSE_PRESS", function(e) {
+        ameoba.moveTo(e.offsetX,e.offsetY);
+    });
+    
     runner.start();
 </script>
 

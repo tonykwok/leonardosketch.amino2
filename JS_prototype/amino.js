@@ -15,6 +15,7 @@ function p(s) {
         console.log(tab+s);
     }
 }
+
 function Transform(n) {
     this.node = n;
     this.rotation = 0;
@@ -160,6 +161,7 @@ function Runner() {
     this.background = "gray";
     this.anims = [];
     this.callbacks = [];
+    this.listeners = {};
     this.tickIndex = 0;
     this.tickSum = 0;
     this.tickSamples = 100;
@@ -171,6 +173,11 @@ function Runner() {
     
     this.setCanvas = function(canvas) {
         self.canvas = canvas;
+        canvas.addEventListener('mousedown',function(e){
+            for(var i=0; i < self.listeners["MOUSE_PRESS"].length; i++) {
+                self.listeners["MOUSE_PRESS"][i](e);
+            }
+        },false);
     };
     
     this.update = function() {
@@ -233,10 +240,19 @@ function Runner() {
         this.anims[this.anims.length] = anim;
         return this;
     };
+    
     this.addCallback = function(callback) {
         this.callbacks[this.callbacks.length] = callback;
         return this;
-    }
+    };
+    
+    this.listen = function(eventKey, callback) {
+        if(!this.listeners[eventKey]) {
+            this.listeners[eventKey] = [];
+        }
+        this.listeners[eventKey].push(callback);
+    };
+    
     return true;
 }
 
