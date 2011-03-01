@@ -8,14 +8,40 @@
 <canvas id="can" width="800" height="600"></canvas>
 
 <script language="JavaScript">
-    var runner = new Runner();
-    runner.setCanvas(document.getElementById("can"));
-    
     function Cell(x,y,radius) {
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this.moving = true;
+        this.startX = x;
+        this.startY = y;
+        this.endX = x;
+        this.endY = y;
+        this.cycleDuration = 10.0;
+        
         var self = this;
+        this.setMoving = function(moving) {
+            self.moving = moving;
+            return self;
+        };
+        this.isMoving = function() {
+            return self.moving;
+        };
+        this.setStart = function(x,y) {
+            self.startX = x;
+            self.startY = y;
+            return self;
+        };
+        this.setEnd = function(x,y) {
+            self.endX = x;
+            self.endY = y;
+            return self;
+        };
+        this.setCycle = function(dur) {
+            self.cycleDuration = dur;
+            return self;
+        };
+        
         this.drawLower = function(ctx) {
             ctx.fillStyle = "white";
             ctx.beginPath();
@@ -29,6 +55,13 @@
             ctx.arc(self.x, self.y, self.radius-10, 0, Math.PI*2, true); 
             ctx.closePath();
             ctx.fill();
+        };
+        this.drawOutline = function(ctx) {
+            ctx.strokeStyle = "#a0a0a0";
+            ctx.beginPath();
+            ctx.arc(self.x, self.y, self.radius-10, 0, Math.PI*2, true); 
+            ctx.closePath();
+            ctx.stroke();
         };
     }
     
@@ -47,19 +80,29 @@
             for(var i=0; i<self.children.length;i++) {
                 self.children[i].drawUpper(ctx);
             }
+            for(var i=0; i<self.children.length;i++) {
+                self.children[i].drawOutline(ctx);
+            }
             outdent();
         };
         return true;
     };
     
-    var cg = new CellGroup();
-    var cell1 = new Cell(100,100,100);
-    var cell2 = new Cell(180,100,80);
-    cg.add(cell1);
-    cg.add(cell2);
-    runner.addAnim(new Anim(cell1,"x",0,300,10.0).setAutoReverse(true).setLoop(true));
-    runner.addAnim(new Anim(cell2,"y",0,200,3.0).setAutoReverse(true).setLoop(true));
-    
+    function Target() {
+        this.x = 100;
+        this.y = 100;
+        this.size = 20;
+        this.draw = function(ctx) {
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.moveTo(this.x-this.size,this.y-this.size);
+            ctx.lineTo(this.x+this.size,this.y-this.size);
+            ctx.lineTo(this.x+this.size,this.y+this.size);
+            ctx.lineTo(this.x-this.size,this.y+this.size);
+            ctx.closePath();
+            ctx.fill();
+        };
+    }
     
     function Ameoba() {
         this.x = 100;
@@ -68,8 +111,25 @@
         this.targetY = this.y;
         this.ciliaAngle = 0;
         this.moving = false;
+        this.dying = false;
+        this.alive = true;
+        this.life = 1000;
+        this.won = false;
         
         this.draw = function(ctx) {
+            if(this.won) {
+                return;
+            }
+            
+            if(!this.alive) {
+                ctx.strokeStyle = "blue";
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true); 
+                ctx.closePath();
+                ctx.stroke();
+                return;
+            }
+            
             if(this.moving) {
                 if(this.targetX < this.x-2) this.x--;
                 if(this.targetX > this.x+2) this.x++;
@@ -78,6 +138,9 @@
             }
             
             ctx.strokeStyle = "white";
+            if(this.dying) {
+                ctx.strokeStyle = "red";
+            }
             ctx.beginPath();
             ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true); 
             ctx.closePath();
@@ -99,26 +162,172 @@
             }
             
             ctx.restore();
+            
+            if(this.dying) {
+                ctx.fillStyle = "white";
+                ctx.fillText(""+this.life,this.x-10,this.y);
+            }
         }
         this.moveTo = function(x,y) {
             this.moving = true;
             this.targetX = x;
             this.targetY = y;
         };
+        this.stop = function() {
+            this.moving = false;
+        };
     };
-    var ameoba = new Ameoba();
+
+
+    function Level() {
+        this.cells = [];
+        this.startX = 0;
+        this.startY = 0;
+    }
+
+    
+    
+    var runner = new Runner();
+    runner.setCanvas(document.getElementById("can"));
+    runner.background = "black";
+    runner.fps = 30;
+    
+    var levels = [];
+    var level1 = new Level();
+    level1.startX = 50;
+    level1.startY = 50;
+    level1.cells = [];
+    level1.cells.push(new Cell(80,80,100).setMoving(false));
+    level1.cells.push(new Cell(180,100,80).setStart(80,80).setEnd(740,450).setCycle(13));
+    level1.cells.push(new Cell(300,50,60).setStart(700,10).setEnd(650,100).setCycle(10));
+    levels.push(level1);
+    
+    var level2 = new Level();
+    level2.startX = 50;
+    level2.startY = 200;
+    level2.cells = [];
+    level2.cells.push(new Cell(50,200,50).setMoving(false));
+    level2.cells.push(new Cell(700,100,50).setMoving(false));
+    level2.cells.push(new Cell(700,100,50).setMoving(false));
+    level2.cells.push(new Cell(50,200,100).setStart(50,200).setEnd(700,100).setCycle(14));
+    level2.cells.push(new Cell(700,100,60).setStart(700,600).setEnd(700,100).setCycle(8));
+    levels.push(level2);
+    
+    console.log("levels = " + levels.length);
+    var currentLevel = levels[0];
+    
+    
+    var board = new Group();
+    
+    function startLevel(l, ameoba) {
+        board.clear();
+        var cg = new CellGroup();
+        for(var i =0; i<l.cells.length; i++) {
+            var c = l.cells[i];
+            if(c.isMoving()) {
+                runner.addAnim(new Anim(c,"x",c.startX,c.endX,c.cycleDuration).setAutoReverse(true).setLoop(true));
+                runner.addAnim(new Anim(c,"y",c.startY,c.endY,c.cycleDuration).setAutoReverse(true).setLoop(true));
+            }
+            cg.add(c);
+        }
+        board.add(cg);
+        board.add(ameoba);
+        runner.addAnim(new Anim(ameoba,"ciliaAngle",-45,45,1.0).setAutoReverse(true).setLoop(true));
+        ameoba.x = l.startX;
+        ameoba.y = l.startY;
+        l.target = new Target();
+        l.target.x = 700; l.target.y = 400;
+        board.add(l.target);
+        runner.addAnim(new Anim(l.target,"size",20,25,1.5).setAutoReverse(true).setLoop(true));
+    }
     
     var g = new Group();
-    g.add(cg);
-    g.add(ameoba);
-    runner.addAnim(new Anim(ameoba,"ciliaAngle",-45,45,1.0).setAutoReverse(true).setLoop(true));
-    g.add(new Text().setText("Osmosis").setX(200).setY(400).setFill("white"));
+    var ameoba = new Ameoba();
     runner.root = g;
-    runner.background = "black";
-    runner.fps = 60;
+    g.add(board);
     
+    
+    //g.add(ameoba);
+    g.add(new Text().setText("Osmosis").setX(50).setY(500).setFill("white").setFont("60pt Verdana"));
+    g.add(new Text().setText("tap to move, stay inside the white cells, get to the red target").setX(56).setY(530).setFill("white").setFont("16pt Verdana"));
     runner.listen("MOUSE_PRESS", function(e) {
         ameoba.moveTo(e.offsetX,e.offsetY);
+    });
+    
+    startLevel(currentLevel,ameoba);
+
+
+    var wonOverlay = new Group();
+    wonOverlay.add(new Rect().set(100,100,600,400).setFill("rgba(0,0,255,0.8)"));
+    wonOverlay.add(new Text().setText("You've won!").setX(200).setY(300).setFill("White").setFont("50pt Georgia"));
+    wonOverlay.setVisible(false);
+    g.add(wonOverlay);
+    
+    var nextLevelOverlay = new Group();
+    nextLevelOverlay.add(new Rect().set(100,100,600,400).setFill("rgba(100,100,255,0.8)"));
+    nextLevelOverlay.add(new Text().setText("Next Level!").setX(200).setY(300).setFill("White").setFont("40pt Georgia"));
+    nextLevelOverlay.setVisible(false);
+    g.add(nextLevelOverlay);
+    runner.listen("MOUSE_PRESS", function(e) {
+        nextLevelOverlay.setVisible(false);
+    });
+    
+    var diedOverlay = new Group();
+    diedOverlay.add(new Rect().set(100,100,600,400).setFill("rgba(100,100,255,0.8)"));
+    diedOverlay.add(new Text().setText("You Died :(").setX(200).setY(300).setFill("White").setFont("60pt Georgia"));
+    diedOverlay.setVisible(false);
+    g.add(diedOverlay);
+    runner.listen("MOUSE_PRESS", function(e) {
+        diedOverlay.setVisible(false);
+    });
+    
+    
+    runner.addCallback(function() {
+        //check if inside a cell
+        var inside = false;
+        for(var i=0; i<currentLevel.cells.length; i++) {
+            var cell = currentLevel.cells[i];
+            if(Math.abs(ameoba.x-cell.x) < cell.radius) {
+                if(Math.abs(ameoba.y-cell.y) < cell.radius) {
+                    inside = true;
+                }
+            }
+        }
+        
+        if(inside) {
+            ameoba.dying = false;
+        } else {
+            ameoba.dying = true;
+        }
+        
+        
+        //check if at the target
+        if(Math.abs(ameoba.x-currentLevel.target.x) < currentLevel.target.size) {
+            if(Math.abs(ameoba.y-currentLevel.target.y) < currentLevel.target.size) {
+                ameoba.life = 1000;
+                ameoba.stop();
+                levels.shift();
+                if(levels.length == 0) {
+                    wonOverlay.setVisible(true);
+                } else {
+                    currentLevel = levels[0];
+                    nextLevelOverlay.setVisible(true);
+                    startLevel(currentLevel,ameoba);
+                }
+            }
+        }
+        
+        if(ameoba.dying) {
+            ameoba.life--;
+        }
+        
+        if(ameoba.life <=0) {
+            //ameoba.alive = false;
+            ameoba.life = 1000;
+            ameoba.stop();
+            diedOverlay.setVisible(true);
+            startLevel(currentLevel,ameoba);
+        }
     });
     
     runner.start();

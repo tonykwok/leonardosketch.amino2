@@ -41,6 +41,7 @@ function Transform(n) {
 
 function Group() {
     this.children = [];
+    this.visible = true;
     var self = this;
     this.add = function(n) {
         self.children[self.children.length] = n;
@@ -48,6 +49,7 @@ function Group() {
         return self;
     };
     this.draw = function(ctx) {
+        if(!self.visible) return;
         p("group: child count = " + self.children.length);
         indent();
         for(var i=0; i<self.children.length;i++) {
@@ -56,6 +58,14 @@ function Group() {
         }
         outdent();
     };
+    this.setVisible = function(visible) {
+        self.visible = visible;
+        return self;
+    }
+    this.clear = function() {
+        self.children = [];
+        return self;
+    }
     return true;
 };
 
@@ -66,8 +76,11 @@ function Text() {
     this.fill = "black";
     
     this.draw = function(ctx) {
+        var f = ctx.font;
+        ctx.font = this.font;
         ctx.fillStyle = this.fill;
         ctx.fillText(this.text,this.x,this.y);
+        ctx.font = f;
     };
     this.setText = function(text) {
         this.text = text;
@@ -85,6 +98,11 @@ function Text() {
         this.fill = fill;
         return this;
     };
+    this.font = "20pt Verdana";
+    this.setFont = function(font) {
+        this.font = font;
+        return this;
+    }
     return true;    
 };
 
