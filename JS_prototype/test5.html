@@ -1,0 +1,44 @@
+<html>
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <script src="amino.js"></script>
+<script language="JavaScript">
+</script>
+
+<body>
+<canvas id="can" width="800" height="600"></canvas>
+
+<script language="JavaScript">
+    var runner = new Runner();
+    runner.setCanvas(document.getElementById("can"));
+    runner.background = "black";
+    runner.fps = 30;
+    
+    var g = new Group();
+    //console.log(g.getParent);
+    g._hash = "asdf";
+    runner.root = g;
+    
+    
+    var nextLevelOverlay = new Group();
+    var bg = new Rect().set(100,100,600,400).setFill("blue");
+    nextLevelOverlay.add(bg);
+    nextLevelOverlay.add(new Text().setText("Next Level!").setX(200).setY(300).setFill("White").setFont("40pt Georgia"));
+    nextLevelOverlay.setVisible(true);
+    nextLevelOverlay._hash = "asdf2";
+    g.add(nextLevelOverlay);
+    runner.listen("MOUSE_PRESS", null, function(e) {
+        //console.log("pressed overall. node is " + e.getNode());
+    });
+    runner.listen("MOUSE_PRESS", nextLevelOverlay, function(e) {
+        //console.log("got a press on the overlay: node is " + e.getNode());
+        if(bg.getFill() == "blue") {
+            bg.setFill("green");
+        } else {
+            bg.setFill("blue");
+        }
+    });
+    runner.start();
+</script>
+
+</body>
+</html>

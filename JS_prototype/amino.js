@@ -1,4 +1,19 @@
-var DEBUG = false;
+
+// 'extend' is From Jo lib, by Dave Balmer
+// syntactic sugar to make it easier to extend a class
+Function.prototype.extend = function(superclass, proto) {
+	// create our new subclass
+	this.prototype = new superclass();
+
+	// optional subclass methods and properties
+	if (proto) {
+		for (var i in proto)
+			this.prototype[i] = proto[i];
+	}
+};
+
+
+var DEBUG = true;
 var tabcount = 0;
 function indent() {
     tabcount++;
@@ -39,21 +54,28 @@ function Transform(n) {
     return true;
 }
 
+function Node() {
+    this.parent = null;
+    var self = this;
+    this.setParent = function(parent) { this.parent = parent; return this; };
+    this.getParent = function() { return this.parent; };
+    return true;
+}
+
 function Group() {
     this.children = [];
     this.visible = true;
+    this.parent = null;
     var self = this;
     this.add = function(n) {
         self.children[self.children.length] = n;
-        p("adding child " + self.children.length);
+        n.setParent(self);
         return self;
     };
     this.draw = function(ctx) {
         if(!self.visible) return;
-        p("group: child count = " + self.children.length);
         indent();
         for(var i=0; i<self.children.length;i++) {
-            p("c = " + self.children[i]);
             self.children[i].draw(ctx);
         }
         outdent();
@@ -61,19 +83,48 @@ function Group() {
     this.setVisible = function(visible) {
         self.visible = visible;
         return self;
-    }
+    };
     this.clear = function() {
         self.children = [];
         return self;
-    }
+    };
+    this.contains = function(x,y) {
+        return false;
+    };
+    this.hasChildren = function() {
+        return true;
+    };
+    this.childCount = function() {
+        return self.children.length;
+    };
+    this.getChild = function(n) {
+        return self.children[n];
+    };
+    Node.call(this);
     return true;
 };
+Group.extend(Node, {});
+
+function Shape() {
+    this.hasChildren = function() { return false; }
+    this.fill = "red";
+    this.setFill = function(fill) {
+        this.fill = fill;
+        return this;
+    };
+    this.getFill = function() {
+        return this.fill;
+    }
+    Node.call(this);
+    return true;
+}
+Shape.extend(Node);
 
 function Text() {
     this.x = 0;
     this.y = 0;
     this.text = "-no text-";
-    this.fill = "black";
+    this.parent = null;
     
     this.draw = function(ctx) {
         var f = ctx.font;
@@ -94,17 +145,18 @@ function Text() {
         this.y = y;
         return this;
     };
-    this.setFill = function(fill) {
-        this.fill = fill;
-        return this;
-    };
+    
     this.font = "20pt Verdana";
     this.setFont = function(font) {
         this.font = font;
         return this;
     }
+    
+    this.contains = function() { return false; }
+    Shape.call(this);
     return true;    
 };
+Text.extend(Shape);
 
 function Circle() {
     this.x = 0.0;
@@ -123,7 +175,6 @@ function Circle() {
         return self;
     };
     this.draw = function(ctx) {
-        p("circle: " + self.x + " " + self.y);
         ctx.fillStyle = self.fill;
         ctx.beginPath();
         ctx.arc(self.x, self.y, self.radius, 0, Math.PI*2, true); 
@@ -132,26 +183,26 @@ function Circle() {
     };
     return true;
 };
+Circle.extend(Shape);
 
 function Rect() {
     this.x = 0.0;
     this.y = 0.0;
-    this.w = 100.0;
+    this.width = 100.0;
     this.height = 100.0;
-    this.fill = "red";
     this.draw = function(ctx) {
         ctx.fillStyle = this.fill;
-        ctx.fillRect(this.x,this.y,this.w,this.height);
+        ctx.fillRect(this.x,this.y,this.width,this.height);
     };
     this.set = function(x,y,w,h) {
         this.x = x;
         this.y = y;
-        this.w = w;
+        this.width = w;
         this.height = h;
         return this;
     };
     this.setWidth = function(w) {
-        this.w = w;
+        this.width = w;
         return this;
     };
     this.setHeight = function(h) {
@@ -166,13 +217,28 @@ function Rect() {
         this.y = y;
         return this;
     };
-    this.setFill = function(fill) {
-        this.fill = fill;
-        return this;
-    }
-    
+    this.contains = function(x,y) {
+        //console.log("comparing: " + this.x + " " + this.y + " " + this.width + " " + this.height + " --- " + x + " " + y);
+        if(x >= this.x && x <= this.x + this.width) {
+            if(y >= this.y && y<=this.y + this.height) {
+                return true;
+            }
+        }
+        return false;
+    };
     return true;
 };
+Rect.extend(Shape);
+
+function MEvent() {
+    this.node = null;
+    this.x = -1;
+    this.y = -1;
+    var self = this;
+    this.getNode = function() {
+        return this.node;
+    }
+}
 
 function Runner() {
     this.root = "";
@@ -192,14 +258,62 @@ function Runner() {
     this.setCanvas = function(canvas) {
         self.canvas = canvas;
         canvas.addEventListener('mousedown',function(e){
-            for(var i=0; i < self.listeners["MOUSE_PRESS"].length; i++) {
-                self.listeners["MOUSE_PRESS"][i](e);
+            //send target node event first
+            var node = self.findNode(self.root,e.offsetX,e.offsetY);
+            var evt = new MEvent();
+            evt.node = node;
+            evt.x = e.offsetX;
+            evt.y = e.offsetY;
+            if(node) {
+                var start = node;
+                while(start) {
+                    self.fireEvent(start,evt);
+                    start = start.getParent();
+                }
             }
+            //send general events next
+            self.fireEvent("MOUSE_PRESS",evt);
         },false);
     };
     
+    this.findNode = function(node,x,y) {
+        //p("findNode:" + node + " " + x + " " + y);
+        //p(node);
+        if(node.contains(x,y)) {
+            //p("node contains it");
+            return node;
+        }
+        if(node.hasChildren()) {
+            indent();
+            for(var i=0;i<node.childCount();i++) {
+                var n = self.findNode(node.getChild(i),x,y);
+                if(n) {
+                    //p("backing up");
+                    outdent();
+                    return n;
+                }
+            }
+            outdent();
+        }
+        return null;
+    };
+    
+    this.fireEvent = function(key,e) {
+        //p("firing event for key: ");
+        //console.log(key);
+        var k = key;
+        if(key._hash) {
+            k = key._hash;
+        }
+        //p("Using real key: " + k);
+        if(self.listeners[k]) {
+            for(var i=0; i<self.listeners[k].length; i++) {
+                self.listeners[k][i](e);
+            }
+        }
+    };
+    
     this.update = function() {
-        p("--");
         var time = new Date().getTime();
         for(i=0;i<self.anims.length; i++) {
             var a = self.anims[i];
@@ -264,11 +378,18 @@ function Runner() {
         return this;
     };
     
-    this.listen = function(eventKey, callback) {
-        if(!this.listeners[eventKey]) {
-            this.listeners[eventKey] = [];
+    this.listen = function(eventKey, eventTarget, callback) {
+        if(eventTarget) {
+            if(!this.listeners[eventTarget._hash]) {
+                this.listeners[eventTarget._hash] = [];
+            }
+            this.listeners[eventTarget._hash].push(callback);
+        } else {
+            if(!this.listeners[eventKey]) {
+                this.listeners[eventKey] = [];
+            }
+            this.listeners[eventKey].push(callback);
         }
-        this.listeners[eventKey].push(callback);
     };
     
     return true;
@@ -332,4 +453,7 @@ function Anim(n,prop,start,end,duration) {
     }
     return true;
 }    
+
+
+
 
