@@ -14,8 +14,7 @@
     runner.fps = 30;
     
     var g = new Group();
-    //console.log(g.getParent);
-    g._hash = "asdf";
+    console.log(g);
     runner.root = g;
     
     
@@ -24,7 +23,6 @@
     nextLevelOverlay.add(bg);
     nextLevelOverlay.add(new Text().setText("Next Level!").setX(200).setY(300).setFill("White").setFont("40pt Georgia"));
     nextLevelOverlay.setVisible(true);
-    nextLevelOverlay._hash = "asdf2";
     g.add(nextLevelOverlay);
     runner.listen("MOUSE_PRESS", null, function(e) {
         //console.log("pressed overall. node is " + e.getNode());

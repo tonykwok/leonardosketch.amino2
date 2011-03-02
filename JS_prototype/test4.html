@@ -64,6 +64,7 @@
             ctx.stroke();
         };
     }
+    Cell.extend(Shape);
     
     function CellGroup() {
         this.children = [];
@@ -87,6 +88,7 @@
         };
         return true;
     };
+    CellGroup.extend(Group);
     
     function Target() {
         this.x = 100;
@@ -103,6 +105,7 @@
             ctx.fill();
         };
     }
+    Target.extend(Shape);
     
     function Ameoba() {
         this.x = 100;
@@ -177,6 +180,7 @@
             this.moving = false;
         };
     };
+    Ameoba.extend(Shape);
 
 
     function Level() {
@@ -250,8 +254,8 @@
     //g.add(ameoba);
     g.add(new Text().setText("Osmosis").setX(50).setY(500).setFill("white").setFont("60pt Verdana"));
     g.add(new Text().setText("tap to move, stay inside the white cells, get to the red target").setX(56).setY(530).setFill("white").setFont("16pt Verdana"));
-    runner.listen("MOUSE_PRESS", function(e) {
-        ameoba.moveTo(e.offsetX,e.offsetY);
+    runner.listen("MOUSE_PRESS", null, function(e) {
+        ameoba.moveTo(e.x,e.y);
     });
     
     startLevel(currentLevel,ameoba);

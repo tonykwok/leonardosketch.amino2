@@ -54,8 +54,10 @@ function Transform(n) {
     return true;
 }
 
+__node_hash_counter = 0;
 function Node() {
     this.parent = null;
+    this._hash = __node_hash_counter++;
     var self = this;
     this.setParent = function(parent) { this.parent = parent; return this; };
     this.getParent = function() { return this.parent; };
@@ -107,6 +109,7 @@ Group.extend(Node, {});
 
 function Shape() {
     this.hasChildren = function() { return false; }
+    
     this.fill = "red";
     this.setFill = function(fill) {
         this.fill = fill;
@@ -114,7 +117,16 @@ function Shape() {
     };
     this.getFill = function() {
         return this.fill;
-    }
+    };
+    this.strokeWidth = 0;
+    this.setStrokeWidth = function(sw) {
+        this.strokeWidth = sw;
+        return this;
+    };
+    this.getStrokeWidth = function() {
+        return this.strokeWidth;
+    };
+    this.contains = function() { return false; }
     Node.call(this);
     return true;
 }
@@ -190,10 +202,6 @@ function Rect() {
     this.y = 0.0;
     this.width = 100.0;
     this.height = 100.0;
-    this.draw = function(ctx) {
-        ctx.fillStyle = this.fill;
-        ctx.fillRect(this.x,this.y,this.width,this.height);
-    };
     this.set = function(x,y,w,h) {
         this.x = x;
         this.y = y;
@@ -217,6 +225,13 @@ function Rect() {
         this.y = y;
         return this;
     };
+    this.corner = 0;
+    
+    this.setCorner = function(c) {
+        this.corner = c;
+        return this;
+    };
+    
     this.contains = function(x,y) {
         //console.log("comparing: " + this.x + " " + this.y + " " + this.width + " " + this.height + " --- " + x + " " + y);
         if(x >= this.x && x <= this.x + this.width) {
@@ -225,6 +240,38 @@ function Rect() {
             }
         }
         return false;
+    };
+    this.draw = function(ctx) {
+        ctx.fillStyle = this.fill;
+        if(this.corner > 0) {
+            var x = this.x;
+            var y = this.y;
+            var width = this.width;
+            var height = this.height;
+            var radius = this.corner;
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+            if(this.strokeWidth > 0) {
+                ctx.lineWidth = this.strokeWidth;
+                ctx.stroke();
+            }
+        } else {
+            ctx.fillRect(this.x,this.y,this.width,this.height);
+            if(this.strokeWidth > 0) {
+                ctx.lineWidth = this.strokeWidth;
+                ctx.strokeRect(this.x,this.y,this.width,this.height);
+            }
+        }
     };
     return true;
 };
@@ -248,16 +295,72 @@ function Runner() {
     this.listeners = {};
     this.tickIndex = 0;
     this.tickSum = 0;
-    this.tickSamples = 100;
+    this.tickSamples = 30;
     this.tickList = [];
     this.lastTick = 0;
     this.fps = 60;
     
     var self = this;
     
+    this.setBackground = function(background) {
+        self.background = background;
+        return self;
+    };
+    
+    this.setFPS = function(fps) {
+        self.fps = fps;
+        return self;
+    };
+    
     this.setCanvas = function(canvas) {
         self.canvas = canvas;
+        var _mouse_pressed = false;
+        var _drag_target = null;
         canvas.addEventListener('mousedown',function(e){
+            _mouse_pressed = true;
+            //send target node event first
+            var node = self.findNode(self.root,e.offsetX,e.offsetY);
+            var evt = new MEvent();
+            evt.node = node;
+            evt.x = e.offsetX;
+            evt.y = e.offsetY;
+            if(node) {
+                var start = node;
+                _drag_target = node;
+                while(start) {
+                    self.fireEvent(start,evt);
+                    start = start.getParent();
+                }
+            }
+            //send general events next
+            self.fireEvent("MOUSE_PRESS",evt);
+        },false);
+        canvas.addEventListener('mousemove', function(e) {
+            if(_mouse_pressed) {
+                var node = self.findNode(self.root,e.offsetX,e.offsetY);
+                var evt = new MEvent();
+                
+                //redirect events to current drag target, if applicable
+                if(_drag_target) {
+                    node = _drag_target;
+                }
+                evt.node = node;
+                evt.x = e.offsetX;
+                evt.y = e.offsetY;
+                if(node) {
+                    var start = node;
+                    while(start) {
+                        self.fireEvent(start,evt);
+                        start = start.getParent();
+                    }
+                }
+                //send general events next
+                self.fireEvent("MOUSE_DRAG",evt);
+            }
+        });
+        canvas.addEventListener('mouseup',function(e){
+            _mouse_pressed = false;
+            _drag_target = false;
             //send target node event first
             var node = self.findNode(self.root,e.offsetX,e.offsetY);
             var evt = new MEvent();
@@ -272,8 +375,9 @@ function Runner() {
                 }
             }
             //send general events next
-            self.fireEvent("MOUSE_PRESS",evt);
+            self.fireEvent("MOUSE_RELEASE",evt);
         },false);
+        return self;
     };
     
     this.findNode = function(node,x,y) {
@@ -336,9 +440,9 @@ function Runner() {
         self.root.draw(ctx);
         
         ctx.save();
-        ctx.translate(0,self.canvas.height-40);
+        ctx.translate(0,self.canvas.height-50);
         ctx.fillStyle = "gray";
-        ctx.fillRect(0,-10,200,50);
+        ctx.fillRect(0,-10,200,60);
         //draw a debugging overlay
         ctx.fillStyle = "black";
         ctx.fillText("timestamp " + new Date().getTime(),10,0);
@@ -358,8 +462,9 @@ function Runner() {
         }
         var fpsAverage = self.tickSum/self.tickSamples;
         ctx.fillText("last msec/frame " + delta,10,10);
-        ctx.fillText("avg msec/frame  " + fpsAverage,10,20);
-        ctx.fillText("avg fps = " + (1.0/fpsAverage)*1000,10,30);
+        ctx.fillText("last frame msec " + (new Date().getTime()-time),10,20);
+        ctx.fillText("avg msec/frame  " + fpsAverage,10,30);
+        ctx.fillText("avg fps = " + (1.0/fpsAverage)*1000,10,40);
         ctx.restore();
     };
     
