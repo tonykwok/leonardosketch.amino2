@@ -31,6 +31,32 @@ function p(s) {
     }
 }
 
+
+
+
+/* The root node class. All nodes have a parent and could
+potentially have children */
+
+__node_hash_counter = 0;
+function Node() {
+    this.parent = null;
+    this._hash = __node_hash_counter++;
+    var self = this;
+    this.setParent = function(parent) { this.parent = parent; return this; };
+    this.getParent = function() { return this.parent; };
+    this.visible = true;
+    this.setVisible = function(visible) {
+        self.visible = visible;
+        return self;
+    };
+    return true;
+}
+
+
+
+
+/* transforms the children inside of it */
+
 function Transform(n) {
     this.node = n;
     this.rotation = 0;
@@ -54,19 +80,16 @@ function Transform(n) {
     return true;
 }
 
-__node_hash_counter = 0;
-function Node() {
-    this.parent = null;
-    this._hash = __node_hash_counter++;
-    var self = this;
-    this.setParent = function(parent) { this.parent = parent; return this; };
-    this.getParent = function() { return this.parent; };
-    return true;
-}
+
+
+
+
+/* A Group holds a set of child nodes. It does not draw anything
+by itself, but setting visible to false will hide the children.
+*/
 
 function Group() {
     this.children = [];
-    this.visible = true;
     this.parent = null;
     var self = this;
     this.add = function(n) {
@@ -81,10 +104,6 @@ function Group() {
             self.children[i].draw(ctx);
         }
         outdent();
-    };
-    this.setVisible = function(visible) {
-        self.visible = visible;
-        return self;
     };
     this.clear = function() {
         self.children = [];
@@ -107,6 +126,12 @@ function Group() {
 };
 Group.extend(Node, {});
 
+
+
+
+/* The base of all shapes. Shapes are geometric
+shapes which have a fill, a stroke, and opacity. They
+may be filled or unfilled.  */
 function Shape() {
     this.hasChildren = function() { return false; }
     
@@ -132,6 +157,13 @@ function Shape() {
 }
 Shape.extend(Node);
 
+
+
+
+
+/* A text shape. draws text on the screen with the
+desired content, font, and color.
+*/
 function Text() {
     this.x = 0;
     this.y = 0;
@@ -170,6 +202,11 @@ function Text() {
 };
 Text.extend(Shape);
 
+
+
+
+
+/* A circle shape */
 function Circle() {
     this.x = 0.0;
     this.y = 0.0;
@@ -197,6 +234,10 @@ function Circle() {
 };
 Circle.extend(Shape);
 
+
+
+
+/* A rectangle shape. May be rounded or have straight corners */
 function Rect() {
     this.x = 0.0;
     this.y = 0.0;
@@ -277,6 +318,14 @@ function Rect() {
 };
 Rect.extend(Shape);
 
+
+
+
+
+
+/* The base mouse event. Has a reference to the node that
+the event was on (if any), and the x and y coords. Will have
+more functionality in the future. */
 function MEvent() {
     this.node = null;
     this.x = -1;
@@ -286,6 +335,84 @@ function MEvent() {
         return this.node;
     }
 }
+
+
+
+
+
+
+/* An Anim is a property animation. It animates a property
+on an object over time, optionally looping and reversing direction
+at the end of each loop (making it oscillate).
+*/
+function Anim(n,prop,start,end,duration) {
+    this.node = n;
+    this.prop = prop;
+    this.started = false;
+    this.startValue = start;
+    this.endValue = end;
+    this.duration = duration;
+    this.loop = false;
+    this.autoReverse = false;
+    this.forward = true;
+    
+    var self = this;
+    
+    this.isStarted = function() {
+        return self.started;
+    };
+    
+    this.setLoop = function(loop) {
+        this.loop = loop;
+        return this;
+    };
+    
+    this.setAutoReverse = function(r) {
+        this.autoReverse = r;
+        return this;
+    };
+    
+    this.start = function(time) {
+        self.startTime = time;
+        self.started = true;
+        self.node[self.prop] = self.startValue;
+    };
+    
+    this.update = function(time) {
+        var elapsed = time-self.startTime;
+        var fract = 0.0;
+        fract = elapsed/(duration*1000);
+        if(fract > 1.0) {
+            if(self.loop) {
+                self.startTime = time;
+                if(self.autoReverse) {
+                    self.forward = !self.forward;
+                }
+                fract = 0.0;
+            } else {
+                return;
+            }
+        }
+        
+        if(!self.forward) {
+            fract = 1.0-fract;
+        }
+        var value = (self.endValue-self.startValue)*fract + self.startValue;
+        self.node[self.prop] = value;
+        
+    }
+    return true;
+}    
+
+
+
+
+
+
+
+
+/* The core of Amino. It redraws the screen, processes events, and
+processes animation. */
 
 function Runner() {
     this.root = "";
@@ -463,8 +590,8 @@ function Runner() {
         var fpsAverage = self.tickSum/self.tickSamples;
         ctx.fillText("last msec/frame " + delta,10,10);
         ctx.fillText("last frame msec " + (new Date().getTime()-time),10,20);
-        ctx.fillText("avg msec/frame  " + fpsAverage,10,30);
-        ctx.fillText("avg fps = " + (1.0/fpsAverage)*1000,10,40);
+        ctx.fillText("avg msec/frame  " + (fpsAverage).toPrecision(3),10,30);
+        ctx.fillText("avg fps = " + ((1.0/fpsAverage)*1000).toPrecision(3),10,40);
         ctx.restore();
     };
     
@@ -500,64 +627,6 @@ function Runner() {
     return true;
 }
 
-function Anim(n,prop,start,end,duration) {
-    this.node = n;
-    this.prop = prop;
-    this.started = false;
-    this.startValue = start;
-    this.endValue = end;
-    this.duration = duration;
-    this.loop = false;
-    this.autoReverse = false;
-    this.forward = true;
-    
-    var self = this;
-    
-    this.isStarted = function() {
-        return self.started;
-    };
-    
-    this.setLoop = function(loop) {
-        this.loop = loop;
-        return this;
-    };
-    
-    this.setAutoReverse = function(r) {
-        this.autoReverse = r;
-        return this;
-    };
-    
-    this.start = function(time) {
-        self.startTime = time;
-        self.started = true;
-        self.node[self.prop] = self.startValue;
-    };
-    
-    this.update = function(time) {
-        var elapsed = time-self.startTime;
-        var fract = 0.0;
-        fract = elapsed/(duration*1000);
-        if(fract > 1.0) {
-            if(self.loop) {
-                self.startTime = time;
-                if(self.autoReverse) {
-                    self.forward = !self.forward;
-                }
-                fract = 0.0;
-            } else {
-                return;
-            }
-        }
-        
-        if(!self.forward) {
-            fract = 1.0-fract;
-        }
-        var value = (self.endValue-self.startValue)*fract + self.startValue;
-        self.node[self.prop] = value;
-        
-    }
-    return true;
-}    
 
 
 
