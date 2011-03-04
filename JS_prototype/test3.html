@@ -38,7 +38,7 @@
         }
         for(i=0;i<g.children.length;i++) {
             var r = g.children[i];
-            r.x += r.vx;
+            r.setX(r.getX()+r.vx);// += r.vx;
             r.y += r.vy;
             if(r.x > MAX_WIDTH) r.x = 0;
             if(r.y > MAX_HEIGHT) r.y = 0;

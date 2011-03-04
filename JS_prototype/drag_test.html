@@ -40,8 +40,8 @@
                 var dy = e.y-sy;
                 sx = e.x;
                 sy = e.y;
-                e.node.x += dx;
-                e.node.y += dy;
+                e.node.setX(e.node.getX() + dx);
+                e.node.setY(e.node.getY() + dy);
             }
         });
         runner.listen("MOUSE_RELEASE", null, function(e) {

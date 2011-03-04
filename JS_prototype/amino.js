@@ -40,14 +40,40 @@ potentially have children */
 __node_hash_counter = 0;
 function Node() {
     this.parent = null;
-    this._hash = __node_hash_counter++;
+    __node_hash_counter++;
+    this._hash = __node_hash_counter;
     var self = this;
     this.setParent = function(parent) { this.parent = parent; return this; };
     this.getParent = function() { return this.parent; };
     this.visible = true;
+    this.dirty = true;
+    this.blocksMouse = false;
     this.setVisible = function(visible) {
         self.visible = visible;
+        self.setDirty();
         return self;
+    };
+    this.isVisible = function() {
+        return this.visible;
+    };
+    this.isMouseBlocked = function() {
+        return this.blocksMouse;
+    };
+    this.setMouseBlocked = function(m) {
+        this.blocksMouse = m;
+        return this;
+    };
+    this.setDirty = function() {
+        this.dirty = true;
+        if(this.getParent()) {
+            this.getParent().setDirty();
+        }
+    };
+    this.isDirty = function() {
+        return self.dirty;
+    };
+    this.clearDirty = function() {
+        self.dirty = false;
     };
     return true;
 }
@@ -58,7 +84,9 @@ function Node() {
 /* transforms the children inside of it */
 
 function Transform(n) {
+    Node.call(this);
     this.node = n;
+    this.node.setParent(this);
     this.rotation = 0;
     this.translateX = 0;
     this.translateY = 0;
@@ -66,19 +94,45 @@ function Transform(n) {
         this.translateX = tx;
         return this;
     };
+    this.setRotate = function(rotation) {
+        this.rotation = rotation;
+        return this;
+    };
     this.setTranslateY = function(ty) {
         this.translateY = ty;
         return this;
     };
+    this.contains = function(x,y) {
+        return false;
+    };
+    this.hasChildren = function() {
+        return true;
+    };
+    this.childCount = function() {
+        return 1;
+    };
+    this.getChild = function(n) {
+        return this.node;
+    };
+    this.convertToChildCoords = function(x,y) {
+        var x1 = x-this.translateX;
+        var y1 = y-this.translateY;
+        var a = -this.rotation * Math.PI/180;
+        var x2 = x1*Math.cos(a) - y1*Math.sin(a);
+        var y2 = x1*Math.sin(a) + y1*Math.cos(a);
+        return [x2,y2];
+    };
     this.draw = function(ctx) {
         ctx.save();
         ctx.translate(this.translateX,this.translateY);
-        ctx.rotate(this.rotation*Math.PI/180,0,0);
+        ctx.rotate(this.rotation*Math.PI/180.0,0,0);
         this.node.draw(ctx);
         ctx.restore();
+        this.clearDirty();
     };
     return true;
 }
+Transform.extend(Node);
 
 
 
@@ -89,24 +143,28 @@ by itself, but setting visible to false will hide the children.
 */
 
 function Group() {
+    Node.call(this);
     this.children = [];
     this.parent = null;
     var self = this;
     this.add = function(n) {
         self.children[self.children.length] = n;
         n.setParent(self);
+        self.setDirty();
         return self;
     };
     this.draw = function(ctx) {
-        if(!self.visible) return;
+        if(!self.isVisible()) return;
         indent();
         for(var i=0; i<self.children.length;i++) {
             self.children[i].draw(ctx);
         }
         outdent();
+        this.clearDirty();
     };
     this.clear = function() {
         self.children = [];
+        self.setDirty();
         return self;
     };
     this.contains = function(x,y) {
@@ -115,13 +173,15 @@ function Group() {
     this.hasChildren = function() {
         return true;
     };
+    this.convertToChildCoords = function(x,y) {
+        return [x,y];
+    };
     this.childCount = function() {
         return self.children.length;
     };
     this.getChild = function(n) {
         return self.children[n];
     };
-    Node.call(this);
     return true;
 };
 Group.extend(Node, {});
@@ -133,11 +193,13 @@ Group.extend(Node, {});
 shapes which have a fill, a stroke, and opacity. They
 may be filled or unfilled.  */
 function Shape() {
+    Node.call(this);
     this.hasChildren = function() { return false; }
     
     this.fill = "red";
     this.setFill = function(fill) {
         this.fill = fill;
+        this.setDirty();
         return this;
     };
     this.getFill = function() {
@@ -146,13 +208,13 @@ function Shape() {
     this.strokeWidth = 0;
     this.setStrokeWidth = function(sw) {
         this.strokeWidth = sw;
+        this.setDirty();
         return this;
     };
     this.getStrokeWidth = function() {
         return this.strokeWidth;
     };
     this.contains = function() { return false; }
-    Node.call(this);
     return true;
 }
 Shape.extend(Node);
@@ -165,6 +227,7 @@ Shape.extend(Node);
 desired content, font, and color.
 */
 function Text() {
+    Shape.call(this);
     this.x = 0;
     this.y = 0;
     this.text = "-no text-";
@@ -176,28 +239,32 @@ function Text() {
         ctx.fillStyle = this.fill;
         ctx.fillText(this.text,this.x,this.y);
         ctx.font = f;
+        this.clearDirty();
     };
     this.setText = function(text) {
         this.text = text;
+        this.setDirty();
         return this;
     };
     this.setX = function(x) {
         this.x = x;
+        this.setDirty();
         return this;
     };
     this.setY = function(y) {
         this.y = y;
+        this.setDirty();
         return this;
     };
     
     this.font = "20pt Verdana";
     this.setFont = function(font) {
         this.font = font;
+        this.setDirty();
         return this;
     }
     
     this.contains = function() { return false; }
-    Shape.call(this);
     return true;    
 };
 Text.extend(Shape);
@@ -208,6 +275,7 @@ Text.extend(Shape);
 
 /* A circle shape */
 function Circle() {
+    Shape.call(this);
     this.x = 0.0;
     this.y = 0.0;
     this.radius = 10.0;
@@ -217,10 +285,16 @@ function Circle() {
         self.x = x;
         self.y = y;
         self.radius = radius;
+        self.setDirty();
         return self;
     };
+    this.getX = function() { return this.x; };
+    this.getY = function() { return this.y; };
+    this.setX = function(x) { this.x = x; this.setDirty(); return this; };
+    this.setY = function(y) { this.y = y; this.setDirty(); return this; };
     this.setFill = function(fill) {
         self.fill = fill;
+        self.setDirty();
         return self;
     };
     this.draw = function(ctx) {
@@ -229,6 +303,7 @@ function Circle() {
         ctx.arc(self.x, self.y, self.radius, 0, Math.PI*2, true); 
         ctx.closePath();
         ctx.fill();
+        this.clearDirty();
     };
     return true;
 };
@@ -239,6 +314,7 @@ Circle.extend(Shape);
 
 /* A rectangle shape. May be rounded or have straight corners */
 function Rect() {
+    Shape.call(this);
     this.x = 0.0;
     this.y = 0.0;
     this.width = 100.0;
@@ -248,28 +324,36 @@ function Rect() {
         this.y = y;
         this.width = w;
         this.height = h;
+        this.setDirty();
         return this;
     };
     this.setWidth = function(w) {
         this.width = w;
+        this.setDirty();
         return this;
     };
     this.setHeight = function(h) {
         this.height = h;
+        this.setDirty();
         return this;
     };
     this.setX = function(x) {
         this.x = x;
+        this.setDirty();
         return this;
     };
+    this.getX = function() { return this.x; };
     this.setY = function(y) {
         this.y = y;
+        this.setDirty();
         return this;
     };
+    this.getY = function() { return this.y; };
     this.corner = 0;
     
     this.setCorner = function(c) {
         this.corner = c;
+        this.setDirty();
         return this;
     };
     
@@ -277,9 +361,11 @@ function Rect() {
         //console.log("comparing: " + this.x + " " + this.y + " " + this.width + " " + this.height + " --- " + x + " " + y);
         if(x >= this.x && x <= this.x + this.width) {
             if(y >= this.y && y<=this.y + this.height) {
+                //console.log("returning true");
                 return true;
             }
         }
+        //console.log("returning false");
         return false;
     };
     this.draw = function(ctx) {
@@ -313,6 +399,7 @@ function Rect() {
                 ctx.strokeRect(this.x,this.y,this.width,this.height);
             }
         }
+        this.clearDirty();
     };
     return true;
 };
@@ -399,6 +486,7 @@ function Anim(n,prop,start,end,duration) {
         }
         var value = (self.endValue-self.startValue)*fract + self.startValue;
         self.node[self.prop] = value;
+        self.node.setDirty();
         
     }
     return true;
@@ -426,6 +514,7 @@ function Runner() {
     this.tickList = [];
     this.lastTick = 0;
     this.fps = 60;
+    this.dirtyTrackingEnabled = true;
     
     var self = this;
     
@@ -447,6 +536,8 @@ function Runner() {
             _mouse_pressed = true;
             //send target node event first
             var node = self.findNode(self.root,e.offsetX,e.offsetY);
+            //p("---------- found node --------");
+            //console.log(node);
             var evt = new MEvent();
             evt.node = node;
             evt.x = e.offsetX;
@@ -455,12 +546,15 @@ function Runner() {
                 var start = node;
                 _drag_target = node;
                 while(start) {
-                    self.fireEvent(start,evt);
+                    self.fireEvent("MOUSE_PRESS",start,evt);
+                    //p("blocked = " + start.isMouseBlocked());
+                    if(start.isMouseBlocked()) return;
                     start = start.getParent();
                 }
             }
             //send general events next
-            self.fireEvent("MOUSE_PRESS",evt);
+            self.fireEvent("MOUSE_PRESS",null,evt);
+            //p("---------------");
         },false);
         canvas.addEventListener('mousemove', function(e) {
             if(_mouse_pressed) {
@@ -477,12 +571,13 @@ function Runner() {
                 if(node) {
                     var start = node;
                     while(start) {
-                        self.fireEvent(start,evt);
+                        self.fireEvent("MOUSE_DRAG",start,evt);
+                        if(start.isMouseBlocked()) return;
                         start = start.getParent();
                     }
                 }
                 //send general events next
-                self.fireEvent("MOUSE_DRAG",evt);
+                self.fireEvent("MOUSE_DRAG",null,evt);
             }
         });
         canvas.addEventListener('mouseup',function(e){
@@ -490,6 +585,7 @@ function Runner() {
             _drag_target = false;
             //send target node event first
             var node = self.findNode(self.root,e.offsetX,e.offsetY);
+            //console.log(node);
             var evt = new MEvent();
             evt.node = node;
             evt.x = e.offsetX;
@@ -497,29 +593,35 @@ function Runner() {
             if(node) {
                 var start = node;
                 while(start) {
-                    self.fireEvent(start,evt);
+                    self.fireEvent("MOUSE_RELEASE",start,evt);
+                    if(start.isMouseBlocked()) return;
                     start = start.getParent();
                 }
             }
             //send general events next
-            self.fireEvent("MOUSE_RELEASE",evt);
+            self.fireEvent("MOUSE_RELEASE",null,evt);
         },false);
         return self;
     };
     
     this.findNode = function(node,x,y) {
-        //p("findNode:" + node + " " + x + " " + y);
-        //p(node);
+        //p("findNode:" + node._hash + " " + x + " " + y);
+        //console.log(node);
+        //don't descend into invisible nodes
+        if(!node.isVisible()) {
+            return null;
+        }
         if(node.contains(x,y)) {
-            //p("node contains it");
+            //p("node contains it " + node._hash);
             return node;
         }
         if(node.hasChildren()) {
+            var nc = node.convertToChildCoords(x,y);
             indent();
             for(var i=0;i<node.childCount();i++) {
-                var n = self.findNode(node.getChild(i),x,y);
+                var n = self.findNode(node.getChild(i),nc[0],nc[1]);
                 if(n) {
-                    //p("backing up");
+                    //p("backing up. matched " + n._hash);
                     outdent();
                     return n;
                 }
@@ -529,23 +631,41 @@ function Runner() {
         return null;
     };
     
-    this.fireEvent = function(key,e) {
-        //p("firing event for key: ");
+    this.fireEvent = function(type,key,e) {
+        //p("firing event for key: " + key + " type = " + type);
         //console.log(key);
         var k = key;
-        if(key._hash) {
+        if(key) {
             k = key._hash;
+        } else {
+            k = "*";
         }
         //p("Using real key: " + k);
+        //p("firing event for key: " + k + " type = " + type);
+        
         if(self.listeners[k]) {
-            for(var i=0; i<self.listeners[k].length; i++) {
-                self.listeners[k][i](e);
+            if(self.listeners[k][type]) {
+                for(var i=0; i<self.listeners[k][type].length; i++) {
+                    var l = self.listeners[k][type][i];
+                    //p("listener = " + l);
+                    l(e);
+                }
             }
         }
     };
+
+    this.drawScene = function(ctx) {
+        //fill the background
+        ctx.fillStyle = self.background;
+        ctx.fillRect(0,0,self.canvas.width,self.canvas.height);
+        
+        //draw the scene
+        self.root.draw(ctx);
+    }        
     
     this.update = function() {
         var time = new Date().getTime();
+        //process animation
         for(i=0;i<self.anims.length; i++) {
             var a = self.anims[i];
             if(!a.isStarted()) {
@@ -554,17 +674,21 @@ function Runner() {
             }
             a.update(time);
         }
+        //process callbacks
         for(i=0;i<self.callbacks.length;i++) {
             self.callbacks[i]();
         }
         
         var ctx = self.canvas.getContext("2d");
-        //fill the background
-        ctx.fillStyle = self.background;
-        ctx.fillRect(0,0,self.canvas.width,self.canvas.height);
         
-        //draw the scene
-        self.root.draw(ctx);
+        if(self.dirtyTrackingEnabled) {
+            if(self.root.isDirty()) {
+                //console.log("drawing");
+                self.drawScene(ctx);
+            }
+        } else {
+            self.drawScene(ctx);
+        }
         
         ctx.save();
         ctx.translate(0,self.canvas.height-50);
@@ -610,18 +734,23 @@ function Runner() {
         return this;
     };
     
-    this.listen = function(eventKey, eventTarget, callback) {
+    this.listen = function(eventType, eventTarget, callback) {
+        var key = "";
         if(eventTarget) {
-            if(!this.listeners[eventTarget._hash]) {
-                this.listeners[eventTarget._hash] = [];
-            }
-            this.listeners[eventTarget._hash].push(callback);
+            key = eventTarget._hash;
         } else {
-            if(!this.listeners[eventKey]) {
-                this.listeners[eventKey] = [];
-            }
-            this.listeners[eventKey].push(callback);
+            key = "*";
         }
+        
+        if(!this.listeners[key]) {
+            this.listeners[key] = [];
+        }
+        if(!this.listeners[key][eventType]) {
+            this.listeners[key][eventType] = [];
+        }
+        
+        this.listeners[key][eventType].push(callback);
+        //p("added listener. key = "+ key + " type = " + eventType + " = " + callback);
     };
     
     return true;
