@@ -1,0 +1,9 @@
+{
+	"id": "com.joshondesign.airhockey2p",
+	"version": "0.0.1",
+	"vendor": "Josh Marinacci",
+	"type": "web",
+	"main": "index.html",
+	"title": "Air Hockey HD",
+	"icon": "icon.png"
+}

@@ -9,6 +9,7 @@
 
 var runner = new Runner();
 runner.setCanvas(document.getElementById("can")).setBackground("white").setFPS(30);
+
 var g = new Group();
 var r1 = new Rect().set(200,0,100,100).setFill("blue");
 var r2 = new Rect().set(0,0,100,100).setFill("green");
@@ -17,6 +18,7 @@ var t1 = new Transform(r2).setTranslateX(50);
 var t2 = new Transform(r3).setRotate(45);
 
 g.add(r1).add(t1).add(t2);
+
 runner.listen("MOUSE_PRESS", null, function(e) {
     console.log("clicked on node " + e.node);
     e.node.setStrokeWidth(5);
@@ -25,11 +27,7 @@ runner.listen("MOUSE_RELEASE", null, function(e) {
     console.log("clicked on node " + e.node);
     e.node.setStrokeWidth(0);
 });
-/*
-runner.listen("MOUSE_PRESS", r2, function(e) {
-    console.log("clicked on r2");
-});*/
-    
+
 runner.root = g;
 runner.start();
 </script>

@@ -2,12 +2,19 @@
     <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
     <script src="amino.js"></script>
 <script language="JavaScript">
+function onLoad() {
+    if (window.PalmSystem) {
+        window.PalmSystem.stageReady();
+    }        
+}
 </script>
-
-<body>
+<body onload="onLoad()">
 <canvas id="can" width="800" height="600"></canvas>
 
+
 <script language="JavaScript">
+
+
     function Cell(x,y,radius) {
         this.x = x;
         this.y = y;
@@ -65,6 +72,7 @@
         };
     }
     Cell.extend(Shape);
+
     
     function CellGroup() {
         this.children = [];
@@ -89,6 +97,9 @@
         return true;
     };
     CellGroup.extend(Group);
+
+
+
     
     function Target() {
         this.x = 100;
@@ -106,6 +117,8 @@
         };
     }
     Target.extend(Shape);
+
+
     
     function Ameoba() {
         this.x = 100;
@@ -149,22 +162,21 @@
             ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true); 
             ctx.closePath();
             ctx.stroke();
-            ctx.save();
             
+            ctx.save();
             ctx.translate(this.x,this.y);
             for(var i=0; i<12; i++) {
                 ctx.rotate(30*Math.PI/180,0,0);
                 ctx.translate(20,0);
-                ctx.rotate(this.ciliaAngle*Math.PI/180,0,0);
+                ctx.rotate(this.ciliaAngle*Math.PI/180,20,0);
                 ctx.beginPath();
                 ctx.moveTo(0,0);
                 ctx.lineTo(10,0);
                 ctx.closePath();
                 ctx.stroke();
-                ctx.rotate(-this.ciliaAngle*Math.PI/180,0,0);
+                ctx.rotate(-this.ciliaAngle*Math.PI/180,20,0);
                 ctx.translate(-20,0);
             }
-            
             ctx.restore();
             
             if(this.dying) {
@@ -184,12 +196,16 @@
     Ameoba.extend(Shape);
 
 
+    
+    
     function Level() {
         this.cells = [];
         this.startX = 0;
         this.startY = 0;
     }
 
+    
+    
     
     
     var runner = new Runner();

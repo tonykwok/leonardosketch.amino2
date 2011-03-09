@@ -1,0 +1,9 @@
+{
+	"id": "com.joshondesign.aminodragtest",
+	"version": "0.0.1",
+	"vendor": "Josh Marinacci",
+	"type": "web",
+	"main": "index.html",
+	"title": "Amino DragTest",
+	"icon": "icon.png"
+}

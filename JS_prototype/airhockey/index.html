@@ -1,0 +1,31 @@
+<html>
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <script src="amino.js"></script>
+<script language="JavaScript">
+</script>
+
+<script language="JavaScript">
+function onLoad() {
+    if (window.PalmSystem) {
+        window.PalmSystem.stageReady();
+    }        
+}
+</script>
+<body onload="onLoad()">
+<canvas id="can" width="800" height="600"></canvas>
+
+<script language="JavaScript">
+    
+    var runner = new Runner();
+    runner.setCanvas(document.getElementById("can"));
+    runner.background = "black";
+    runner.fps = 30;
+
+
+    
+    
+    runner.start();
+</script>
+
+</body>
+</html>
