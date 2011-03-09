@@ -1,6 +1,13 @@
 <html>
     <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
     <script src="amino.js"></script>
+    <style>
+body {
+    padding: 0;
+    margin: 0;
+    border: 0px solid red;
+}
+    </style>
 <script language="JavaScript">
 </script>
 
@@ -12,9 +19,59 @@ function onLoad() {
 }
 </script>
 <body onload="onLoad()">
-<canvas id="can" width="800" height="600"></canvas>
+<canvas id="can" width="1024" height="740"></canvas>
 
 <script language="JavaScript">
+var CH = 740;
+function distance(x1,y1,x2,y2) {
+    var x = x2-x1;
+    var y = y2-y1;
+    return Math.sqrt(x*x+y*y);
+}
+    //the dragger makes all shapes draggable
+    function Dragger(runner) {
+        var sx = 0;
+        var sy = 0;
+        var started = false;
+        runner.listen("MOUSE_PRESS", null, function(e) {
+            if(e.node == paddle1 || e.node == paddle2) {
+                started = true;
+            }
+            sx = e.x;
+            sy = e.y;
+        });
+        runner.listen("MOUSE_DRAG", null, function(e) {
+            if(e.node && started) {
+                var dx = e.x-sx;
+                var dy = e.y-sy;
+                sx = e.x;
+                sy = e.y;
+                
+                var x = e.node.getX() + dx;
+                var y = e.node.getY() + dy;
+                if(e.node == paddle1 && x > 300) { x = 300; sx = 300;}
+                if(e.node == paddle2 && x < 1024-300) { x = 1024-300; sx = 1024-300;}
+                    
+                if(distance(e.node.getX(),e.node.getY(),puck.getX(),puck.getY()) < e.node.getRadius()+puck.getRadius()) {
+                    console.log("collision");
+                    if(puck.getX() < e.node.getX()) {
+                        puck.setX(e.node.getX()-e.node.getRadius()-puck.getRadius());
+                        puck.vx = -20;
+                    }
+                    if(puck.getX() > e.node.getX()) {
+                        puck.setX(e.node.getX()+e.node.getRadius()+puck.getRadius());
+                        puck.vx = 20;
+                    }
+                }
+                e.node.setX(x);
+                e.node.setY(y);
+            }
+        });
+        runner.listen("MOUSE_RELEASE", null, function(e) {
+                started = false;
+        });
+        
+    };
     
     var runner = new Runner();
     runner.setCanvas(document.getElementById("can"));
@@ -22,7 +79,57 @@ function onLoad() {
     runner.fps = 30;
 
 
+    var board = new Group();
     
+    var tp = new Rect().set(0,0,1024,30).setFill("blue");
+    var bottom = new Rect().set(0,CH-30,1024,30).setFill("blue");
+    var left = new Rect().set(0,0,30,CH).setFill("blue");
+    var right = new Rect().set(1024-30,0,30,CH).setFill("blue");
+    //board.add(top).add(bottom).add(left).add(right);
+    board.add(tp).add(bottom).add(left).add(right);
+    board.add(new Rect().set(300,30,3,CH-60).setFill("#444444"));
+    board.add(new Rect().set(1024-300,30,3,CH-60).setFill("#444444"));
+    runner.root = board;
+    
+    var puck = new Circle().set(200,200,20).setFill("red");
+    puck.vx = 8.5;
+    puck.vy = 7.5;
+    puck.ax = 0.999;
+    puck.ay = 0.999;
+    board.add(puck);
+    
+    
+    var paddle1 = new Circle().set(100,350,40).setFill("green");
+    var paddle2 = new Circle().set(1024-100,350,40).setFill("green");
+    board.add(paddle1);
+    board.add(paddle2);        
+    new Dragger(runner);
+    
+    runner.addCallback(function() {
+        var x = puck.getX();
+        var y = puck.getY();
+        //console.log("radius = " + puck.getRadius());
+        if(x + puck.getRadius() > right.getX()) {
+            puck.vx = -puck.vx;
+        }
+        if(x - puck.getRadius() < left.getX()+left.getWidth()) {
+            puck.vx = -puck.vx;
+        }
+        if(y + puck.getRadius() > bottom.getY()) {
+            puck.vy = -puck.vy;
+        }
+        if(y - puck.getRadius() < tp.getY()+tp.getHeight()) {
+            puck.vy = -puck.vy;
+        }
+        
+        puck.vx *= puck.ax;
+        puck.vy *= puck.ay;
+        x += puck.vx;
+        y += puck.vy;
+        
+        puck.setX(x);
+        puck.setY(y);
+    });
     
     runner.start();
 </script>

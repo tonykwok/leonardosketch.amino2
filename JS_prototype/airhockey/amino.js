@@ -290,6 +290,7 @@ function Circle() {
     };
     this.getX = function() { return this.x; };
     this.getY = function() { return this.y; };
+    this.getRadius = function() { return this.radius; };
     this.setX = function(x) { this.x = x; this.setDirty(); return this; };
     this.setY = function(y) { this.y = y; this.setDirty(); return this; };
     this.setFill = function(fill) {
@@ -304,6 +305,14 @@ function Circle() {
         ctx.closePath();
         ctx.fill();
         this.clearDirty();
+    };
+    this.contains = function(x,y) {
+        if(x >= this.x-this.radius && x <= this.x + this.radius) {
+            if(y >= this.y-this.radius && y<=this.y + this.radius) {
+                return true;
+            }
+        }
+        return false;
     };
     return true;
 };
@@ -327,11 +336,13 @@ function Rect() {
         this.setDirty();
         return this;
     };
+    this.getWidth = function() { return this.width; };
     this.setWidth = function(w) {
         this.width = w;
         this.setDirty();
         return this;
     };
+    this.getHeight = function() { return this.height; };
     this.setHeight = function(h) {
         this.height = h;
         this.setDirty();
